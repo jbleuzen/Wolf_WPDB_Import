@@ -13,12 +13,6 @@
  *
  */
 
-/**
- * Root location where WPDB Import plugin lives.
- */
- 
-//define('FUNKY_CACHE_ROOT', URI_PUBLIC.'wolf/plugins/wpdb_import');
-
 Plugin::setInfos(array(
     'id'          => 'wpdb_import',
     'title'       => __('WordPress DataBase Import'), 
@@ -27,13 +21,11 @@ Plugin::setInfos(array(
     'license'     => 'MIT',
     'author'      => 'Johan BLEUZEN',
     'require_wolf_version' => '0.7.0',
-//    'update_url'  => 'http://www.appelsiini.net/download/frog-plugins.xml',
+//    'update_url'  => '',
     'website'     => 'https://github.com/jbleuzen/Wolf_WPDB_Import'
 ));
 
 /* Stuff for backend. */
-if (defined('CMS_BACKEND'))  {
-    
+if (defined('CMS_BACKEND'))  {   
     Plugin::addController('wpdb_import', 'WP Import');
-    
 }

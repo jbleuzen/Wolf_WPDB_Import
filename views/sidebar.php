@@ -15,6 +15,7 @@
 
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
+ 
 ?>
 
 <p class="button"><a href="<?php echo get_url('plugin/wpdb_import/'); ?>"><img src="/wolf/admin/images/page.png" align="middle" alt="documentation icon" /> <?php echo __('Import'); ?></a></p>

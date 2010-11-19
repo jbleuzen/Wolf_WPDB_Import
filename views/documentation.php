@@ -16,19 +16,9 @@
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
 
-/**
- * The BackupRestore plugin provides administrators with the option of backing
- * up their pages and settings to an XML file.
- *
- * @package plugins
- * @subpackage backup_restore
- *
- * @author Martijn van der Kleijn <martijn.niji@gmail.com>
- * @version 0.0.1
- * @since Wolf version 0.6.0
- * @license http://www.gnu.org/licenses/gpl.html GPLv3 License
- * @copyright Martijn van der Kleijn, 2009
- */
 ?>
 <h1><?php echo __('Documentation'); ?></h1>
-<p>TO BE DONE WHEN PLUGIN WILL BE EVOLVED ENOUGH</p>
+<p>TO BE UPDATED WHEN PLUGIN WILL BE EVOLVED ENOUGH</p>
+
+<p>Actually, the plugin works ONLY with a WordPress DataBase exported named "wordpress.xml".<br/>
+The XML file must located in your wolf root folder. (This will change in the future).</p>
