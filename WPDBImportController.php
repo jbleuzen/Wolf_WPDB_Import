@@ -57,7 +57,7 @@ class WPDBImportController extends PluginController
       $parentId = 4;
       $layoutId = 0;
 
-	    $xml = simplexml_load_file("/Users/johan/Sites/test/wordpress.xml");
+	    $xml = simplexml_load_file("wordpress.xml");
 	    $items = $xml->channel->item;
 			foreach ($items as $item){
 				$item_wps = $item->children('wp', TRUE);
