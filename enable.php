@@ -1,16 +1,19 @@
 <?php
 
 /*
- * Funky Cache - Frog CMS caching plugin
+ * WPDB Import - WolfCMS importing WordPress DataBase plugin
  *
- * Copyright (c) 2008-2009 Mika Tuupola
+ * Copyright (c) 2010 Johan BLEUZEN
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   http://www.appelsiini.net/projects/funky_cache
+ *   https://github.com/jbleuzen/Wolf_WPDB_Import
  *
  */
- 
-}
+
+// Nothing to do ATM
+
+
+?>

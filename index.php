@@ -1,17 +1,15 @@
 <?php
 
 /*
- * Funky Cache - Wolf CMS caching plugin
+ * WPDB Import - WolfCMS importing WordPress DataBase plugin
  *
- * Copyright (c) 2008-2009 Mika Tuupola
+ * Copyright (c) 2010 Johan BLEUZEN
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   http://www.appelsiini.net/projects/funky_cache
- *
- * ported to Wolf CMS by sartas (http://sartas.ru)
+ *   https://github.com/jbleuzen/Wolf_WPDB_Import
  *
  */
 
@@ -30,7 +28,7 @@ Plugin::setInfos(array(
     'author'      => 'Johan BLEUZEN',
     'require_wolf_version' => '0.7.0',
 //    'update_url'  => 'http://www.appelsiini.net/download/frog-plugins.xml',
-    'website'     => 'http://blog.johanbleuzen.fr'
+    'website'     => 'https://github.com/jbleuzen/Wolf_WPDB_Import'
 ));
 
 /* Stuff for backend. */

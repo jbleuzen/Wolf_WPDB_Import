@@ -1,0 +1,5 @@
+This is a WolfCMS plugin.
+
+What is supported today :
+ - Import of published posts from a WordPress DataBase.
+ - Can select which user import.

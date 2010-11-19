@@ -26,8 +26,6 @@
 if (!defined('IN_CMS')) { exit(); }
 
 /**
- * The BackupRestore plugin provides administrators with the option of backing
- * up their pages and settings to an XML file.
  *
  * @package plugins
  * @subpackage backup_restore
