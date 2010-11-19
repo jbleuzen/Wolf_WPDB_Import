@@ -22,7 +22,7 @@ if (!defined('IN_CMS')) { exit(); }
 	<fieldset style="padding: 0.5em;">
     <legend style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">Warning!</legend>
 		<h2 style="text-align: center;">Remember to save your WolfCMS DataBase first !!!</h2>
-		<p style="text-align: center;">I won't be held responsible of any data loose cause I've warned you !!!</p>
+		<p style="text-align: center;">I won't be held responsible of any data loss cause I've warned you !!!</p>
   </fieldset>
 	<div>
 	Choisir l'utilisateur qui importe le contenu
