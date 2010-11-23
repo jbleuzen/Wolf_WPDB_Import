@@ -18,29 +18,30 @@ if (!defined('IN_CMS')) { exit(); }
 
 ?>
 	<h1>Import</h1>
-	<form action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
 	<fieldset style="padding: 0.5em;">
     <legend style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">Warning!</legend>
-		<h2 style="text-align: center;">Remember to save your WolfCMS DataBase first !!!</h2>
-		<p style="text-align: center;">I won't be held responsible of any data loss cause I've warned you !!!</p>
-  </fieldset>
-	<div>
-	Choisir l'utilisateur qui importe le contenu
-	<select name="userid" id="">
-	<?php
-		$all_users = User::findAll();
-	  $current_user_id = AuthUser::getRecord()->id;
-		foreach($all_users as $user){
-			$current = $user->id == $current_user_id ? 'selected' : '';
-			echo "<option $current value='$user->id'>$user->name</option>";
-		}
-	?>
-	</select>
-	</div>
+		<h2 style="text-align: center;">Please save your WolfCMS DataBase first !!!</h2>
+		<h3 style="text-align: center;">I won't be held responsible of any data loss cause I've warned you !!!</h3>
+
+<form style="text-align:center;" action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
+	<input type="hidden" name="importPost" value="1" />
 <!--	<div>
 		<p>Choisir quel contenu à importer</p>
-		<p><input type="checkbox"  name="posts"/><label for="posts">Posts</label></p>
-		<p><input type="checkbox"  name="pages"/><label for="pages">Pages</label></p>
+		<p><input type="checkbox" checked name="importCategory"/><label for="pages">Category</label></p>
+		<p><input type="checkbox" name="importPage"/><label for="pages">Pages</label></p>
+		<p><input type="checkbox" name="importPost"/><label for="pages">Posts</label></p>
+		<p><input type="checkbox" name="importComment"/><label for="posts">Comments</label></p>
 	</div>-->
-	<input type="submit" value="Import">
+	<input style="width:100px;" type="submit" value="Import">
 </form>
+
+
+
+  </fieldset>
+
+<!--<form action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
+ <input type="hidden" name="MAX_FILE_SIZE" value="10240000">
+     File : <input type="file" name="wpdb_file">
+     <input type="submit" name="envoyer" value="Envoyer le fichier">
+</form>-->
+
