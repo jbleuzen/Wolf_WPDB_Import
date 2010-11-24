@@ -52,6 +52,8 @@ class WPDBImportController extends PluginController {
 			}*/
 			if((isset($_POST['importPage']) && $_POST['importPage']) || (isset($_POST['importPost']) && $_POST['importPost'])){
 				self::_importContent($xml, $userId);
+				Flash::set('success', __('Import successful !'));
+				redirect(get_url('page'));
 			}
 /*			if(isset($_POST['importComment']) && $_POST['importComment'] == true){
 				self::_importComment($xml, $userId);
@@ -130,12 +132,15 @@ class WPDBImportController extends PluginController {
 						$parentId = 1;
 					}
 
+					$userId = self::_checkUserExist($item->creator);
+					if($userId == -1)
+						continue;
+
 					$title = $item->title;
 					$slug = $item->post_name;
 					$status = $item->status;
 					$datePublished = $item->pubDate;				
 					$commentStatus = ($item->comment_status != "open") ? 0 : 1;
-					$userId = self::_checkUserExist($item->creator);
 					$page_array = array($title, $slug, $datePublished, $datePublished, $parentId, 0,$userId);
 					$pageId = self::_insertPage($page_array);
 
@@ -143,7 +148,6 @@ class WPDBImportController extends PluginController {
 					self::_insertPart($pageId, $content);
 				}
 			}
-			echo "done !";
 		}
 		
 		private function _importComment(){
