@@ -1,7 +1,7 @@
 h3. This a WolfCMS plugin that import WordPress database backup file in XML.
 
 What is supported today :
- - Import of published posts and pages from a WordPress DataBase.
+* Import of published posts and pages from a WordPress DataBase.
 
 h3. TODO : 
 * Import Pages
