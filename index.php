@@ -17,7 +17,7 @@ Plugin::setInfos(array(
     'id'          => 'wpdb_import',
     'title'       => __('WordPress DataBase Import'), 
     'description' => __('Import data from a WordPress DataBase into WolfCMS'), 
-    'version'     => '0.0.1', 
+    'version'     => '0.0.5', 
     'license'     => 'MIT',
     'author'      => 'Johan BLEUZEN',
     'require_wolf_version' => '0.7.0',
