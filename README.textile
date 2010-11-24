@@ -18,4 +18,4 @@ h4. 0.0.5
 * Imported page and file are assign to the right user. Won't import if WP user don't exists in WolfCMS.
 
 h4. 0.0.1
-*Basic import of Posts
+* Basic import of Posts
