@@ -13,7 +13,9 @@ h3. TODO :
 h3. Version :
  
 h4. 0.0.5
+
 * Now import Posts and Pages.
 * Imported page and file are assign to the right user. Won't import if WP user don't exists in WolfCMS.
+
 h4. 0.0.1
 *Basic import of Posts
