@@ -1,14 +1,16 @@
-This is a WolfCMS plugin that import WordPress database backup file in XML.
+h3. This a WolfCMS plugin that import WordPress database backup file in XML.
 
 What is supported today :
  - Import of published posts and pages from a WordPress DataBase.
 
-TODO : 
-<ul>
-<li>Test</li>
-</ul>
+h3. TODO : 
+* Import Pages
+* Create user in WolfCMS if don't exist
+* Allow upload of a database file
 
-Version : 
-0.0.5 : Now import Posts and Pages.
-	Imported page and file are assign to the right user. Won't import if WP user don't exists in WolfCMS.
-0.0.1 : Basic import of Posts
+h3. Version : 
+h4. 0.0.5
+* Now import Posts and Pages.
+* Imported page and file are assign to the right user. Won't import if WP user don't exists in WolfCMS.
+h4. 0.0.1
+*Basic import of Posts
