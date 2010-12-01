@@ -1,16 +1,27 @@
 h3. This a WolfCMS plugin that import WordPress database backup file in XML.
 
 What is supported today :
+* Import of published Pages.
+* Import Categories as an empty Page.
+* Import of published Posts in the right Category.
+* Import ALL comments (spam and non-spam) and bind them to the right Post.
+* Upload a WordPress XML backup file into the CMS.
 
-* Import of published posts and pages from a WordPress DataBase.
 
 h3. TODO : 
-
-* Import Pages
+* Enhance the upload (UploaderHelper ?)
+* Allow to delete the uploaded WordPress XML Backup
 * Create user in WolfCMS if don't exist
-* Allow upload of a database file
+* Import only approuved comments ?
 
 h3. Version :
+
+h4. 0.0.5
+
+* Import categories as empty Pages
+* Import Posts in the right categories
+* Import comments (even spam comments)
+* Can upload a WordPress XM Backup file
  
 h4. 0.0.5
 
@@ -18,4 +29,5 @@ h4. 0.0.5
 * Imported page and file are assign to the right user. Won't import if WP user don't exists in WolfCMS.
 
 h4. 0.0.1
+
 * Basic import of Posts
