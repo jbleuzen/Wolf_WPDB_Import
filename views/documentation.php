@@ -22,3 +22,9 @@ if (!defined('IN_CMS')) { exit(); }
 
 <p>Actually, the plugin works ONLY with a WordPress DataBase exported named "wordpress.xml".<br/>
 The XML file must located in your wolf root folder. (This will change in the future).</p>
+<h3>TODO :</h3>
+<ul>
+	<li>Import comments</li>
+	<li>Create user when doesn't exist</li>
+	<li></li>
+</ul>
