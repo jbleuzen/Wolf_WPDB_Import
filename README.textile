@@ -8,17 +8,25 @@ What is supported today :
 * Import ALL comments (spam and non-spam) and bind them to the right Post.
 * Upload a WordPress XML backup file into the CMS.
 
-
 h3. TODO : 
 
-* Do not create a category page if a page already exists with the category name.
-* Enhance the upload (UploaderHelper ?).
 * Allow to delete the uploaded WordPress XML Backup.
 * Create user in WolfCMS if don't already exist.
-* Import only approuved comments ?
-* Enable localisation in the code (everything is hard coded in English).
+* Store status of page
+* Create a page that informs user about what have been imported (?)
+* Enhance the uploader by using UploaderHelper (?).
+* Import only approuved comments (?)
 
-h3. Version :
+h3. Versions :
+
+h4. 0.0.7
+
+* Don't create a category if a page already exists with the category slug.
+* Fixing a bug where you couldn't upload a file bigger than 100ko, now set to 10Mo
+* Adding documentation : How to use this plugin
+* Localisation of the plugin. Only french is available
+* Enhancing design of forms with style
+* Code cleaning and documenting
 
 h4. 0.0.6
 
