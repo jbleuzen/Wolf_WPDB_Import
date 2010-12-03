@@ -30,7 +30,7 @@ if (!defined('IN_CMS')) { exit(); }
 		<form  action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="MAX_FILE_SIZE" value="10240000">
 			<input type="file" name="wpdb_file">
-			<input style="height:25px;margin:25px 0px 15px;width:100px;" type="submit" name="Upload" value="<?php echo __('Upload file'); ?>">
+			<input style="height:25px;margin:25px 0px 15px;" type="submit" name="Upload" value="<?php echo __('Upload file'); ?>">
 		</form>
 	<?php } ?>
 	</div>
