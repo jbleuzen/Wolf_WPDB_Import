@@ -240,7 +240,7 @@ class WPDBImportController extends PluginController {
 		/**
 		 * Checks if $username is a valid user in WolfCMS
 		 */
-		public function _checkUserExists($username){
+		private function _checkUserExists($username){
 			$userId = -1;
 			$filter = array(
 				'where' => User::tableNameFromClassName('User').'.username="'.(string)$username.'"',
@@ -255,7 +255,7 @@ class WPDBImportController extends PluginController {
 		/**
 		 * Checks if $slug is a valid page in WolfCMS
 		 */
-		public function _checkSlugExists($slug){
+		private function _checkSlugExists($slug){
 			$exist = true;
 			$filter = array(
 				'where' => 'slug = "' . $slug . '"',
