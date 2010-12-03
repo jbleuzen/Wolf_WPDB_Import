@@ -18,6 +18,20 @@ if (!defined('IN_CMS')) { exit(); }
  
 ?>
 
-<p class="button"><a href="<?php echo get_url('plugin/wpdb_import/'); ?>"><img src="/wolf/admin/images/page.png" align="middle" alt="documentation icon" /> <?php echo __('Import'); ?></a></p>
-<p class="button"><a href="<?php echo get_url('plugin/wpdb_import/documentation'); ?>"><img src="/wolf/admin/images/page.png" align="middle" alt="documentation icon" /> <?php echo __('Documentation'); ?></a></p>
+<p class="button">
+	<a href="<?php echo get_url('plugin/wpdb_import/'); ?>">
+		<img src="<?php echo BACKUPRESTORE_ROOT;?>/images/upload.png" align="middle" alt="documentation icon" />
+		<?php echo __('Import'); ?>
+	</a>
+</p>
+<p class="button">
+	<a href="<?php echo get_url('plugin/wpdb_import/documentation'); ?>">
+		<img src="<?php echo BACKUPRESTORE_ROOT;?>/images/page.png" align="middle" alt="documentation icon" />
+		<?php echo __('Documentation'); ?>
+	</a>
+</p>
+<div class="box">
+	<h2><?php echo __('WordPress Import plugin');?></h2>
+	<p><?php echo __('Import data from a WordPress DataBase into WolfCMS.'); ?></p>
+	<p style="text-align:center;"><?php echo __('Version'); ?> - <?php echo WPDB_VERSION; ?></p>
 </div>
