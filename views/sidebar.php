@@ -20,13 +20,13 @@ if (!defined('IN_CMS')) { exit(); }
 
 <p class="button">
 	<a href="<?php echo get_url('plugin/wpdb_import/'); ?>">
-		<img src="<?php echo BACKUPRESTORE_ROOT;?>/images/upload.png" align="middle" alt="documentation icon" />
+		<img src="<?php echo WPDB_ROOT;?>/images/upload.png" align="middle" alt="upload icon" />
 		<?php echo __('Import'); ?>
 	</a>
 </p>
 <p class="button">
 	<a href="<?php echo get_url('plugin/wpdb_import/documentation'); ?>">
-		<img src="<?php echo BACKUPRESTORE_ROOT;?>/images/page.png" align="middle" alt="documentation icon" />
+		<img src="<?php echo WPDB_ROOT;?>/images/page.png" align="middle" alt="documentation icon" />
 		<?php echo __('Documentation'); ?>
 	</a>
 </p>
