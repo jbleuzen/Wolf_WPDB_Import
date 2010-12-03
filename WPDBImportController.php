@@ -31,6 +31,8 @@ class WPDBImportController extends PluginController {
         $this->assignToLayout('sidebar', new View('../../plugins/wpdb_import/views/sidebar'));
     }
 
+// Public view methods -------------------------------------------------------------------------------------------------
+
     function index() {
         $this->display('wpdb_import/views/index', array());
     }
@@ -39,10 +41,10 @@ class WPDBImportController extends PluginController {
         $this->display('wpdb_import/views/documentation', array());
     }
 
-
+//  Public methods, can be accessed with navigator  --------------------------------------------------------------------
 
 		public function upload(){
-			$maxFileSize = 100000;
+			$maxFileSize = 10; // 10Mo
 			$result = "error";
 
 			$fileTmpName = $_FILES['wpdb_file']['tmp_name'];
@@ -50,19 +52,19 @@ class WPDBImportController extends PluginController {
 			$extension = substr($_FILES['wpdb_file']['name'], -3); 
 
 			if($extension != "xml") {
-				$message = "Uploaded file is not valid xml.";
+				$message = __('Uploaded file is not a valid XML file.');
 			}
-			if($fileSize > $maxFileSize) {
-				$message = "Uploaded file is too heavy, it must not be over $maxFileSize.";
+			if($fileSize > $maxFileSize * 1024 * 1024) {
+				$message = sprintf(__("Uploaded file is too heavy, it must not be over %d MB."),  $maxFileSize);
 			}
 			if(!isset($message)) {
-				// Setting the name of the uploaded file
+				// Forcing the name of the uploaded file
 				$filename = "wordpress.xml";
 				if(move_uploaded_file($fileTmpName, $filename)) {
 					$result = "success";
-				  $message = "File uploaded successfully!";
+				  $message = __("File uploaded successfully !");
 				} else {
-					$message = "An error occurs during file upload.";
+					$message = __("An error occurs during file upload.");
 				}
 			}	
 			Flash::set($result, $message);
@@ -75,19 +77,22 @@ class WPDBImportController extends PluginController {
 			$userId = AuthUser::getRecord()->id;
 
       $xml = self::_removeNameSpacesInXml();
+			if (false == $xml) {
+				Flash::set('error', __('Invalid XML WordPress backup file.'));
+				redirect(get_url('plugin/wpdb_import/'));
+			}
 
-			self::_importCategory($xml, $userId);
-			self::_importContent($xml, $userId);
+			self::_importCategories($xml, $userId);
+			self::_importContents($xml, $userId);
 
-			Flash::set('success', 'Import successful !');
+			Flash::set('success', __('Import successful !'));
 			redirect(get_url('page'));
-			
 		}
 	
-//  Private methods  -----------------------------------------------------
+//  Private methods  ---------------------------------------------------------------------------------------------------
 
 		/**
-		 *	This methods "cleans" the XML file by removing useless namespace.
+		 *	Cleans the XML file by removing useless namespace.
 		 * 	We don't need them and it clutters the source.
 		 */
 		private function _removeNameSpacesInXml(){
@@ -96,12 +101,12 @@ class WPDBImportController extends PluginController {
 			$cleaned = str_replace('</wp:', '</', $cleaned);
 			$cleaned = str_replace('<dc:', '<', $cleaned);
 			$cleaned = str_replace('</dc:', '</', $cleaned);
-			$xml = new SimpleXmlElement($cleaned);
+			$xml = simplexml_load_string($cleaned);
 			return $xml;
 		}
 		
 	/**
-	 * This methods create a new page in DB
+	 * Creates a new page
 	 */
 		private function _insertPage($data) {
 			error_reporting(E_ALL);
@@ -114,7 +119,7 @@ class WPDBImportController extends PluginController {
 		}
 
 	/**
-	 * This methods create a new part for $pageId
+	 * Creates a new part for $pageId
 	 */
 		private function _insertPart($pageId, $content){
 			error_reporting(E_ALL);
@@ -127,7 +132,7 @@ class WPDBImportController extends PluginController {
 		}
 
 	/**
-	 * This methods create a new part for $pageId
+	 * Creates a new comment
 	 */
 		private function _insertComment($data){
 			error_reporting(E_ALL);
@@ -138,12 +143,19 @@ class WPDBImportController extends PluginController {
 			$stm->execute($data);
 		}
 
-
-		private function _importCategory($xml, $userId){
+		/**
+		 * Imports categories as a "special" page
+		 * Default user is $userId, if user from XML doesn't exists in WolfCMS
+		 */
+		private function _importCategories($xml, $userId){
 			$tmp = array();
 			foreach($xml->channel->category as $category){
-				$title = $category->cat_name;
 				$slug = $category->category_nicename;
+				$slugExists = self::_checkSlugExists($slug);
+				if($slugExists == true)
+					continue;
+
+				$title = $category->cat_name;
 				$commentStatus = false; // Can't write comments on pages
 				$datePublished = $category->post_date;				
 				$parentId = 1; // As a category, it's a child of Homepage which ID is 1;
@@ -151,37 +163,44 @@ class WPDBImportController extends PluginController {
 				$statusId = 101; // We hide catgories
 				$data = array($title, $slug, $datePublished, $datePublished, $parentId, $layoutId, $statusId, $userId);
 				
-
 				// TODO Test if a category already exists
 				$categoryId = self::_insertPage($data);
 				// Storing category ID in array
 				$tmp[(string)$title] = $categoryId;
 
-				// TODO insert default content that will display posts
+				// TODO insert default content that will display posts of category
 				// self::_insertPart($pageId, categoryContent);
 
 			}
 			$this->categories = $tmp;
-			print_r($this->categories);
 		}				
 		         
-		private function _importContent($xml, $userId){	
+		/**
+		 * Imports posts and pages
+		 * Default user is $userId, if user from XML doesn't exists in WolfCMS
+		 */
+		private function _importContents($xml, $userId){	
 			foreach ($xml->channel->item as $item){
-				$postType = $item->post_type;
 				$status = $item->status;
 				// We import only published posts
 				if($status == "publish"){
-					$userId = self::_checkUserExist($item->creator);
+					$userId = self::_checkUserExists($item->creator);
 					if($userId == -1)
 						continue;
 
-					$title = $item->title;
 					$slug = $item->post_name;
+					$slugExists = self::_checkSlugExists($slug);
+					if($slugExists == true){
+						continue;
+					}
+
+					$postType = $item->post_type;
+					$title = $item->title;
 					$status = $item->status;
 					$datePublished = $item->post_date;				
 					$commentStatus = ($item->comment_status != "open") ? 0 : 1;
 					if($postType == "post")
-						$parentId = $this->categories[(string)$item->category];
+						$parentId = self::_getCategoryByName($item->category);
 					elseif($postType == "page"){
 						$parentId = 1;
 					}
@@ -195,13 +214,15 @@ class WPDBImportController extends PluginController {
 					$content = $item->children('content', TRUE);
 					self::_insertPart($pageId, $content);
 
-					self::_importComment($pageId, $item->comment);
+					self::_importComments($pageId, $item->comment);
 				}
 			}
 		}
 		
-		private function _importComment($pageId, $xml){
-
+		/**
+		 * Imports comments of $pageId post
+		 */
+		private function _importComments($pageId, $xml){
 			foreach($xml as $comment){
 				$author =  (string) $comment->comment_author;
 				$mail = (string) $comment->comment_author_mail;
@@ -215,17 +236,48 @@ class WPDBImportController extends PluginController {
 				self::_insertComment($data);
 			}
 		}   
-
-		public function _checkUserExist($username){
+		
+		/**
+		 * Checks if $username is a valid user in WolfCMS
+		 */
+		public function _checkUserExists($username){
 			$userId = -1;
-			$data = array(
-				'where' => User::tableNameFromClassName('User').'.name="'.(string)$username.'"',
+			$filter = array(
+				'where' => User::tableNameFromClassName('User').'.username="'.(string)$username.'"',
 				'limit' => 1
 			);
-			$user = User::find($data);
+			$user = User::find($filter);
 			if(count($user) != 0)
 				$userId = $user->id;
 			return $userId;
 		}
+
+		/**
+		 * Checks if $slug is a valid page in WolfCMS
+		 */
+		public function _checkSlugExists($slug){
+			$exist = true;
+			$filter = array(
+				'where' => 'slug = "' . $slug . '"',
+				'limit' => 1
+			);
+			$result = Page::find($filter);
+			if($result == false){
+				echo "on insere";
+				$exist = false;
+			}
+			return $exist;
+		}
 		
+		/** 
+		 * Retrieve the id from a category
+		 */
+		private function _getCategoryByName($category){
+			$filter = array(
+				'where' => 'slug = "' . $category . '"',
+				'limit' => 1
+			);
+			$result = Page::find($filter);
+			return $result->id;
+		}
 }
