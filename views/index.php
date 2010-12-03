@@ -17,28 +17,21 @@
 if (!defined('IN_CMS')) { exit(); }
 
 ?>
-	<h1>Import</h1>
-	<fieldset style="padding: 0.5em;">
-    <legend style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">Warning!</legend>
-		<h2 style="text-align: center;">Please save your WolfCMS DataBase first !!!</h2>
-		<h3 style="text-align: center;">I won't be held responsible of any data loss, because I've warned you !!!</h3>
-		<?php if( file_exists ("wordpress.xml")){ ?>
-			<form style="text-align:center;" action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
-				<input type="hidden" name="importCategory" value="1" />
-				<!--
-					<input type="checkbox" checked name="importCategory"/><label for="pages">Category</label>
-					<input type="checkbox" name="importPage"/><label for="pages">Pages</label>
-					<input type="checkbox" name="importPost"/><label for="pages">Posts</label>
-					<input type="checkbox" name="importComment"/><label for="posts">Comments</label>
-				-->
-				<input style="width:100px;" type="submit" value="Import">
-			</form>
-		<?php } else {?>
-			<form style="text-align:center;" action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="MAX_FILE_SIZE" value="10240000">
-				<input type="file" name="wpdb_file">
-				<input type="submit" name="Upload" value="Upload file">
-			</form>
-
+<h1><?php echo __('WordPress Import');?></h1>
+<fieldset style="padding: 0.5em; margin-top:5px;">
+	<h2 style="text-align: center;"><?php echo __('Remember to save your WolfCMS DataBase !!!');?></h2>
+	<h3 style="text-align: center;"><?php echo __('I cannot be held responsible of any data loss. Because I have warned you !!!');?></h3>
+	<div style="text-align:center;">
+	<?php if( file_exists ("wordpress.xml")){ ?>
+		<form action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
+			<input style="height:25px;margin:25px 0px 15px;width:100px;" type="submit" value="<?php echo __('Import'); ?>">
+		</form>
+	<?php } else {?>
+		<form  action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="MAX_FILE_SIZE" value="10240000">
+			<input type="file" name="wpdb_file">
+			<input style="height:25px;margin:25px 0px 15px;width:100px;" type="submit" name="Upload" value="<?php echo __('Upload file'); ?>">
+		</form>
 	<?php } ?>
-  </fieldset>
+	</div>
+</fieldset>
