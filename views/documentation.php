@@ -19,8 +19,14 @@ if (!defined('IN_CMS')) { exit(); }
 ?>
 <h1><?php echo __('Documentation'); ?></h1>
 
-<h2>How to use this plugin ?</h2>
+<h2>You have a question ?</h2>
+<p>If you find a bug or have a request, please drop me word here :</p>
+<ul>
+	<li><a href="http://www.wolfcms.org/forum/topic1006.html" target="_blank">WolfCMS Forum</a></li>
+	<li><a href="https://github.com/jbleuzen/Wolf_WPDB_Import/issues" target="_blank">Github repository</a></li>
+</ul>
 
+<h2>How to use this plugin ?</h2>
 <h3>Export your data from WordPress</h3>
 <p>Go to your administration in WordPress, then expand the Tool tabs and click on the Export link.<br/>
 Tune the export to your needs and hit the download button, you should get a new file named wordpress with a date following.
@@ -29,14 +35,4 @@ Tune the export to your needs and hit the download button, you should get a new 
 <p>The upload page is the <a href=".">same page</a> that import data.</p>
 <p>By default, the plugin ask you to upload a WordPress database XML file. Now that we have generate it, just select the file you downloaded in previous step</p>
 <h3>Import your WordPress DataBase XML File</h3>
-
-<p>TO BE UPDATED WHEN PLUGIN WILL BE EVOLVED ENOUGH</p>
-
-<p>Actually, the plugin works ONLY with a WordPress DataBase exported named "wordpress.xml".<br/>
-The XML file must located in your wolf root folder. (This will change in the future).</p>
-<h3>TODO :</h3>
-<ul>
-	<li>Import comments</li>
-	<li>Create user when doesn't exist</li>
-	<li></li>
-</ul>
+<p>Once the WordPress XML file is uploaded, you now have a new button "Import". You just have to click on that button to make the magic happen.</p>
