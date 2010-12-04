@@ -88,6 +88,13 @@ class WPDBImportController extends PluginController {
 			Flash::set('success', __('Import successful !'));
 			redirect(get_url('page'));
 		}
+		
+		public function deleteWPFile(){
+			unlink('wordpress.xml');
+			
+			Flash::set('success', __('The file have been deleted.'));
+			redirect(get_url('plugin/wpdb_import'));
+		}
 	
 //  Private methods  ---------------------------------------------------------------------------------------------------
 
