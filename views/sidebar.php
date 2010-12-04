@@ -34,7 +34,7 @@ if (!defined('IN_CMS')) { exit(); }
 <p class="button">
 	<a href="<?php echo get_url('plugin/wpdb_import/deleteWPFile'); ?>">
 		<img src="<?php echo WPDB_ROOT;?>/images/delete.png" align="middle" alt="delete icon" />
-		<?php echo __('Delete WordPress XML file.');?>
+		<?php echo __('Delete WordPress XML file');?>
 	</a>
 </p>
 <?php } ?>

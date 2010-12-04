@@ -20,6 +20,7 @@
 			// View - Sidebar
 			'Import' => 'Importer',
 			'Documentation' => 'Documentation',
+			'Delete WordPress XML file' => 'Supprimer le fichier XML WordPress',
 			'WordPress Import plugin' => 'Plugin d\'importation de WordPress'
 
     );
