@@ -30,6 +30,14 @@ if (!defined('IN_CMS')) { exit(); }
 		<?php echo __('Documentation'); ?>
 	</a>
 </p>
+<?php if( file_exists ("wordpress.xml")){ ?>
+<p class="button">
+	<a href="<?php echo get_url('plugin/wpdb_import/deleteWPFile'); ?>">
+		<img src="<?php echo WPDB_ROOT;?>/images/delete.png" align="middle" alt="delete icon" />
+		<?php echo __('Delete WordPress XML file.');?>
+	</a>
+</p>
+<?php } ?>
 <div class="box">
 	<h2><?php echo __('WordPress Import plugin');?></h2>
 	<p><?php echo __('Import data from a WordPress DataBase into WolfCMS.'); ?></p>
