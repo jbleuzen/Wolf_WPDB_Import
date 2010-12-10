@@ -19,6 +19,12 @@ h3. TODO :
 
 h3. Versions :
 
+h4. 0.0.8
+
+* Added an action to remove the uploaded file easilly.
+* Changed buttons in sidebar when a file is uploaded or not.
+* Fixing a bug on comments import (email wasn't imported).
+
 h4. 0.0.7
 
 * Don't create a category if a page already exists with the category slug.

@@ -21,7 +21,7 @@ define('WPDB_ROOT', URI_PUBLIC.'wolf/plugins/wpdb_import');
 /**
  * Version of the plugin
  */
-define('WPDB_VERSION', '0.0.7');
+define('WPDB_VERSION', '0.0.8');
 
 Plugin::setInfos(array(
     'id'          => 'wpdb_import',
