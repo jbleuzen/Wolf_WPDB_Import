@@ -20,8 +20,13 @@ if (!defined('IN_CMS')) { exit(); }
 
 <p class="button">
 	<a href="<?php echo get_url('plugin/wpdb_import/'); ?>">
-		<img src="<?php echo WPDB_ROOT;?>/images/upload.png" align="middle" alt="upload icon" />
-		<?php echo __('Import'); ?>
+		<?php if( file_exists ("wordpress.xml")){ ?>	
+		<img src="<?php echo WPDB_ROOT;?>/images/import.png" align="middle" alt="upload icon" />
+		<?php echo __('Import the file'); ?>
+		<?php } else { ?>
+			<img src="<?php echo WPDB_ROOT;?>/images/upload.png" align="middle" alt="upload icon" />
+			<?php echo __('Upload a backup'); ?>
+		<?php } ?>
 	</a>
 </p>
 <p class="button">
@@ -32,7 +37,16 @@ if (!defined('IN_CMS')) { exit(); }
 </p>
 <?php if( file_exists ("wordpress.xml")){ ?>
 <p class="button">
-	<a href="<?php echo get_url('plugin/wpdb_import/deleteWPFile'); ?>">
+	<script>
+		$(document).ready(function() {
+			$('#wpdb_delete').click(function(event){
+				if(confirm("<?php echo __('Are your sure you want to delete your WordPress Backup file ?');?>") == false){
+					event.preventDefault();
+				}
+			});
+		});
+	</script>
+	<a id="wpdb_delete" href="<?php echo get_url('plugin/wpdb_import/deleteWPFile'); ?>" onclick="ConfirmMessage();">
 		<img src="<?php echo WPDB_ROOT;?>/images/delete.png" align="middle" alt="delete icon" />
 		<?php echo __('Delete WordPress XML file');?>
 	</a>

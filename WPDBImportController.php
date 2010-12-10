@@ -90,9 +90,12 @@ class WPDBImportController extends PluginController {
 		}
 		
 		public function deleteWPFile(){
-			unlink('wordpress.xml');
-			
-			Flash::set('success', __('The file have been deleted.'));
+			$result = unlink('wordpress.xml');
+			if($result == false){
+				Flash::set('error', __('An error occured while trying to delete the file.'));
+			} else {
+				Flash::set('success', __('The file have been deleted.'));
+			}
 			redirect(get_url('plugin/wpdb_import'));
 		}
 	
@@ -232,7 +235,7 @@ class WPDBImportController extends PluginController {
 		private function _importComments($pageId, $xml){
 			foreach($xml as $comment){
 				$author =  (string) $comment->comment_author;
-				$mail = (string) $comment->comment_author_mail;
+				$mail = (string) $comment->comment_author_email;
 				$url =  (string) $comment->comment_author_url;
 				$body = (string) $comment->comment_content;
 				$ip = (string) $comment->comment_author_IP;
