@@ -16,9 +16,13 @@
 			'File uploaded successfully !' => 'Le fichier a été envoyé correctement !',
 			'An error occurs during file upload.' => 'Une erreur est survenue lors de l\'envoi du fichier.',
 			'Invalid XML WordPress backup file.' => 'Le fichier XML de sauvegarde WordPress est invalide.',
+			'An error occured while trying to delete the file.' => 'Une erreur est survenue lors de la suppression du fichier.',
+			'The file have been deleted.' => 'Le fichier a été supprimé.',
 
 			// View - Sidebar
-			'Import' => 'Importer',
+			'Upload a backup' => 'Envoyer une sauvegarde',
+			'Import the file' => 'Importer le fichier',
+			'Are your sure you want to delete your WordPress Backup file ?' => 'Êtes vous sur de vouloir supprimer votre fichier de sauvegarde WordPress ?',
 			'Documentation' => 'Documentation',
 			'Delete WordPress XML file' => 'Supprimer le fichier XML WordPress',
 			'WordPress Import plugin' => 'Plugin d\'importation de WordPress'
