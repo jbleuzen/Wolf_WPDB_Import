@@ -1,3 +1,9 @@
+h2. INSTALLATION
+
+When you download the plugin, you'll get a folder named like that : #jbleuzen-Wolf_WPDB_Import-5bc17a6#
+Before you upload the plugin onto your server, you must rename the folder : #wpdb_import# or when you'll activate the plugin it won't work.
+
+
 h3. This a WolfCMS plugin that import WordPress database backup file in XML.
 
 What is supported today :
