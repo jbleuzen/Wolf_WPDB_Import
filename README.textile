@@ -2,8 +2,7 @@ h2. DESCRIPTION :
 
 h3. This a WolfCMS plugin which may be used to populate a WolfCMS installation from a Wordpress eXtended RSS file.
 
-Note:	This plugin currently works with Wordpress eXtended RSS file vr. 1.1 
-		and Wordpress vr. 3.1.2.
+Note:	This plugin currently works with Wordpress eXtended RSS file vr. 1.1 and Wordpress vr. 3.1.2.
 
 What is supported today :
 
@@ -14,16 +13,21 @@ What is supported today :
 * Custom settings of import behaviors.
 * Import under a custom first level page (beneath the Home Page).
 * Placement of WP:Posts under correct, imported WP:Category.
-* Import WP:Categories with custom content.
 
 h2. INSTALLATION :
 
-1. Download the plugin.
-2. Rename the plugin folder; @wpdb_import@.
-3. Place the plugin folder in the @/wolf/plugins/@ folder of your WolfCMS installation.
-4. Activate the plugin using the WolfCMS plugin page.
+# Download the plugin.
+# Rename the plugin folder; @wpdb_import@.
+# Place the plugin folder in the @/wolf/plugins/@ folder of your WolfCMS installation.
+# Activate the plugin using the WolfCMS plugin page.
 
 h2. USAGE :
+
+# Activate the plugin.
+# Apply setings by clicking Settings on the admin plugins page.
+# Click on the 'WPDB Import' tab.
+# Upload a Wordpress eXtended RSS file.
+# Click the import button.
 
 h2. TODO : 
 
@@ -37,6 +41,7 @@ h4. Short-term
 * Add section on settings, "Save and Import"
 * Check proper return checking and make this consistent.
 * Handle posts with multiple categories.
+* Allow custom Category page data, as well as a default.
 
 h4. Long-term
 
@@ -49,7 +54,7 @@ h4. Long-term
 
 h2. VERSIONS :
 
-h4. 0.1.0
+h4. 1.0.0
 
 * Added settings page to customize some ambiguous import behaviors.
 * Added enable, disable, install, and uninstall behaviors.
