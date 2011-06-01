@@ -3,7 +3,7 @@
 /*
  * WPDB Import - WolfCMS importing WordPress DataBase plugin
  *
- * Copyright (c) 2010 Johan BLEUZEN
+ * Copyright (c) 2010 Johan BLEUZEN  and  Matthew COLEMAN
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -15,6 +15,8 @@
 
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
+
+Plugin::addJavascript('wpdb_import', 'test.js');
 
 ?>
 <h1><?php echo __('WordPress Import');?></h1>
@@ -28,10 +30,13 @@ if (!defined('IN_CMS')) { exit(); }
 		</form>
 	<?php } else {?>
 		<form  action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="MAX_FILE_SIZE" value="10240000">
+			<!-- max file size is 25MB -->
+			<input type="hidden" name="MAX_FILE_SIZE" value="25000000" />
 			<input type="file" name="wpdb_file">
 			<input style="height:25px;margin:25px 0px 15px;" type="submit" name="Upload" value="<?php echo __('Upload file'); ?>">
 		</form>
 	<?php } ?>
 	</div>
 </fieldset>
+
+<script type="text/javascript">alert( testFunc());</script>

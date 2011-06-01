@@ -1,32 +1,60 @@
-h2. INSTALLATION
+h2. DESCRIPTION :
 
-When you download the plugin, you'll get a folder named like that : @jbleuzen-Wolf_WPDB_Import-5bc17a6@.
-Before you upload the plugin onto your server, *you must rename* the plugin folder : @wpdb_import@.
+h3. This a WolfCMS plugin which may be used to populate a WolfCMS installation from a Wordpress eXtended RSS file.
 
-If you don't do that, the plugin won't be activated and won't work.
-
-h2. DESCRIPTION
-
-h3. This a WolfCMS plugin that import WordPress database backup file in XML.
+Note:	This plugin currently works with Wordpress eXtended RSS file vr. 1.1 
+		and Wordpress vr. 3.1.2.
 
 What is supported today :
 
-* Import of published Pages.
-* Import Categories as an empty Page.
-* Import of published Posts in the right Category.
-* Import ALL comments (spam and non-spam) and bind them to the right Post.
-* Upload a WordPress XML backup file into the CMS.
+* Upload of a Wordpress eXtended RSS file.
+* Import of WP:Categories.
+* Import of WP:Pages.
+* Import of WP:Posts.
+* Custom settings of import behaviors.
+* Import under a custom first level page (beneath the Home Page).
+* Placement of WP:Posts under correct, imported WP:Category.
+* Import WP:Categories with custom content.
+
+h2. INSTALLATION :
+
+1. Download the plugin.
+2. Rename the plugin folder; @wpdb_import@.
+3. Place the plugin folder in the @/wolf/plugins/@ folder of your WolfCMS installation.
+4. Activate the plugin using the WolfCMS plugin page.
+
+h2. USAGE :
 
 h2. TODO : 
 
-* Allow to delete the uploaded WordPress XML Backup.
-* Create user in WolfCMS if don't already exist.
-* Store status of page
-* Create a page that informs user about what have been imported (?)
-* Enhance the uploader by using UploaderHelper (?).
-* Import only approuved comments (?)
+h4. Short-term
+
+* Comment import.
+* Create user in WolfCMS if they don't already exist.
+* Add timestamps to post imports.
+* Better handle WP:Category 'Uncategorized.'
+* Handle WP:Category hieararchy.
+* Add section on settings, "Save and Import"
+* Check proper return checking and make this consistent.
+* Handle posts with multiple categories.
+
+h4. Long-term
+
+* Create a log file after succesful import which shows the success status of each import.
+* Allow for full custom placement of pages.
+* Allow for import rules, allowing specific imports to go and do specific things.
+* Enhance the uploader by using UploaderHelper.
+* Use WolfCMS plugin settings functions.
+* Define behavior to replace links and images within the Wordpress body.
 
 h2. VERSIONS :
+
+h4. 0.1.0
+
+* Added settings page to customize some ambiguous import behaviors.
+* Added enable, disable, install, and uninstall behaviors.
+* Adjusted to changes in Wordpress eXtended RSS file format.
+* Code cleaning and documentation.
 
 h4. 0.0.8
 

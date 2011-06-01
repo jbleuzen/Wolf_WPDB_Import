@@ -1,42 +1,40 @@
 <?php
 
 /*
- * WPDB Import - WolfCMS importing WordPress DataBase plugin
+ * Wordpress Database Import - Wordpress to WolfCMS importing plugin
  *
- * Copyright (c) 2010 Johan BLEUZEN
+ * Copyright (c) 2010 Johan BLEUZEN  and  Matthew COLEMAN
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
  *   https://github.com/jbleuzen/Wolf_WPDB_Import
- *
  */
 
+/* Security measure */
+if (!defined('IN_CMS')) { exit(); }
+
 /**
- * Root location where WordPress Import plugin lives.
+ * Root location where WPDB Import lives.
  */
-define('WPDB_ROOT', URI_PUBLIC.'wolf/plugins/wpdb_import');
+define( 'WPDB_ROOT', URI_PUBLIC.'wolf/plugins/wpdb_import');
 
 /**
  * Version of the plugin
  */
-define('WPDB_VERSION', '0.0.8');
+define( 'WPDB_VERSION', '1.0.0');
 
 Plugin::setInfos(array(
-    'id'          => 'wpdb_import',
-    'title'       => __('WordPress DataBase Import'), 
-    'description' => __('Import data from a WordPress DataBase into WolfCMS.'), 
-    'version'     => '0.0.7', 
-    'license'     => 'MIT',
-    'author'      => 'Johan Bleuzen',
-    'update_url'  => 'http://www.johanbleuzen.fr/wolfcms_update.xml',
-    'website'     => 'https://github.com/jbleuzen/Wolf_WPDB_Import',
-		'type'        => 'backend',
-    'require_wolf_version' => '0.7.0'
+    'id'          			=> 'wpdb_import',
+    'title'       			=> __('Wordpress Database Import'),
+    'description' 			=> __('Used to populate a WolfCMS installation from a Wordpress eXtended RSS file.'),
+    'version'     			=> WPDB_VERSION,
+   	'license'     			=> 'MIT',
+	'author'      			=> 'Johan Bleuzen, Matthew Coleman',
+    'website'     			=> '',
+    'update_url'  			=> '',
+    'require_wolf_version' 	=> '0.7.0'
 ));
 
-/* Adds the tab in admin */
-if (defined('CMS_BACKEND'))  {   
-    Plugin::addController('wpdb_import', 'WP Import');
-}
+Plugin::addController('wpdb_import', __('WPDB Import'));
