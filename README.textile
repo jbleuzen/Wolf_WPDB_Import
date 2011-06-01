@@ -24,7 +24,7 @@ h2. INSTALLATION :
 h2. USAGE :
 
 # Activate the plugin.
-# Apply setings by clicking Settings on the admin plugins page.
+# Apply settings from the WolfCMS plugin page.
 # Click on the 'WPDB Import' tab.
 # Upload a Wordpress eXtended RSS file.
 # Click the import button.
