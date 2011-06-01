@@ -34,8 +34,6 @@ $authors = User::findAll();
 <h1>WPDB Import Settings</h1>
 <?php echo( $page_users_sel1); ?>
 
-<div id="button"><a href="#" id="testbutton">Test button</a></div>
-
 	<form id="import_settings" name="import_settings" action="<?php echo get_url('plugin/wpdb_import/setSettings'); ?>" method="post" enctype="multipart/form-data">
 		<fieldset style="padding: 8px" id="cat">
 			<legend>

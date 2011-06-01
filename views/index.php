@@ -1,7 +1,7 @@
 <?php
 
 /*
- * WPDB Import - WolfCMS importing WordPress DataBase plugin
+ * Wordpress Database Import - Wordpress to WolfCMS importing plugin
  *
  * Copyright (c) 2010 Johan BLEUZEN  and  Matthew COLEMAN
  *
@@ -10,19 +10,24 @@
  *
  * Project home:
  *   https://github.com/jbleuzen/Wolf_WPDB_Import
- *
  */
 
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
 
-Plugin::addJavascript('wpdb_import', 'test.js');
-
 ?>
 <h1><?php echo __('WordPress Import');?></h1>
 <fieldset style="padding: 0.5em; margin-top:5px;">
-	<h2 style="text-align: center;"><?php echo __('Remember to save your WolfCMS DataBase !!!');?></h2>
-	<h3 style="text-align: center;"><?php echo __('I cannot be held responsible of any data loss. Because I have warned you !!!');?></h3>
+	<h2><?php echo __('Backup your WolfCMS database before you do this.');?></h2>
+	<h3><?php echo __('This will make life easier if you change your mind or make a mistake.');?></h3>
+	<hr />
+	<div style="margin-left: 100px;">
+	<p style="font-weight: bold;">Usage:</p>
+	<ol>
+		<li><span style="font-weight: bold;">Upload</span> a Wordpress eXtended RSS file.</li>
+		<li><span style="font-weight: bold;">Import</span> the file's contents.</li>
+	</ol>
+	</div>
 	<div style="text-align:center;">
 	<?php if( file_exists ("wordpress.xml")){ ?>
 		<form action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
