@@ -49,7 +49,7 @@ h4. Long-term
 * Allow for full custom placement of pages.
 * Allow for import rules, allowing specific imports to go and do specific things.
 * Enhance the uploader by using UploaderHelper.
-* Use WolfCMS plugin settings functions.
+* Use WolfCMS plugin settings functions instead of direct SQL.
 * Define behavior to replace links and images within the Wordpress body.
 
 h2. VERSIONS :

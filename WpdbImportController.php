@@ -111,7 +111,7 @@ class WPDBImportController extends PluginController {
     		
     		$sql =
     		 
-	  			"CREATE TABLE ".TABLE_PREFIX."wpdb_import IF NOT EXISTS (
+	  			"CREATE TABLE IF NOT EXISTS ".TABLE_PREFIX."wpdb_import (
 	  			cat_import tinyint(1) NOT NULL DEFAULT '1',
 				cat_slug tinyint(1) NOT NULL DEFAULT '1',
 				cat_status enum('Draft','Preview','Published','Hidden','Archived') NOT NULL DEFAULT 'Published',
