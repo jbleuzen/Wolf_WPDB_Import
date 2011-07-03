@@ -9,7 +9,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */

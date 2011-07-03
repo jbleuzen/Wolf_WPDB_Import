@@ -9,7 +9,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */
@@ -23,7 +23,7 @@ define( 'WPDB_ROOT', URI_PUBLIC.'wolf/plugins/wpdb_import');
 /**
  * Version of the plugin
  */
-define( 'WPDB_VERSION', '1.0.1');
+define( 'WPDB_VERSION', '1.0.5');
 
 Plugin::setInfos(array(
     'id'          			=> 'wpdb_import',
@@ -38,3 +38,5 @@ Plugin::setInfos(array(
 ));
 
 Plugin::addController('wpdb_import', __('WPDB Import'));
+
+?>

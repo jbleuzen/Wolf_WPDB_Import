@@ -9,7 +9,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */
@@ -28,7 +28,7 @@ if (!defined('IN_CMS')) { exit(); }
 		<?php } ?>
 	</a>
 </p>
-<?php if( file_exists ("wordpress.xml")){ ?>
+<?php if( file_exists ('wolf/plugins/wpdb_import/uploads/wordpress.xml')){ ?>
 <p class="button">
 	<script>
 		$(document).ready(function() {
@@ -39,7 +39,7 @@ if (!defined('IN_CMS')) { exit(); }
 			});
 		});
 	</script>
-	<a id="wpdb_delete" href="<?php echo get_url('plugin/wpdb_import/deleteWPFile'); ?>" onclick="ConfirmMessage();">
+	<a id="wpdb_delete" href="<?php echo get_url('plugin/wpdb_import/WPDB_deleteFile'); ?>" onclick="ConfirmMessage();">
 		<img src="<?php echo WPDB_ROOT;?>/images/delete.png" align="middle" alt="delete icon" />
 		<?php echo __('Delete file');?>
 	</a>

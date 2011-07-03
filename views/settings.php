@@ -9,7 +9,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */
@@ -34,7 +34,7 @@ $authors = User::findAll();
 <h1>WPDB Import Settings</h1>
 <?php echo( $page_users_sel1); ?>
 
-	<form id="import_settings" name="import_settings" action="<?php echo get_url('plugin/wpdb_import/setSettings'); ?>" method="post" enctype="multipart/form-data">
+	<form id="import_settings" name="import_settings" action="<?php echo get_url('plugin/wpdb_import/WPDB_setSettings'); ?>" method="post" enctype="multipart/form-data">
 		<fieldset style="padding: 8px" id="cat">
 			<legend>
 				<input type="checkbox" name="cat_import" id="cat_import" <?php if( $cat_import): ?>checked="checked"<?php endif; ?> onchange="check_cat( this.id); cat_import_toggle( this.id);" value="true" /> 
@@ -58,14 +58,18 @@ $authors = User::findAll();
 			
 			<h4>Content</h4>
 			
+			<?php /* 
 			<input type="radio" class="disabled" name="cat_content" id="cat_content0" <?php if( $cat_content == '0'): ?>checked="checked"<?php endif; ?> value="0" onchange="element_toggle( 'cat_content1', 'cat_content_inc');" disabled="disabled" /> 
-				<label for="cat_content0">Include default page listing</label><br />
+				<label for="cat_content0">Include default page listing</label><br />	
+			*/ ?>
 				
+			<?php /*
 			<input type="radio" class="disabled" name="cat_content" id="cat_content1" <?php if( $cat_content == '1'): ?>checked="checked"<?php endif; ?> value="1" onchange="element_toggle( 'cat_content1', 'cat_content_inc');" disabled="disabled" /> 
 				<label for="cat_content1">Include the following content: </label>
 			<input type="hidden" name="MAX_FILE_SIZE" value="2500000000000000" />
 			<input type="file" name="cat_content_inc" id="cat_content_inc" <?php if( $cat_content != '1'): ?>disabled="disabled"<?php endif; ?> ><br />
 			<!-- TODO add file name if already uploaded -->
+			*/ ?>
 			
 			<input type="radio" name="cat_content" id="cat_content2" <?php if( $cat_content == '2'): ?>checked="checked"<?php endif; ?> value="2" onchange="element_toggle( 'cat_content1', 'cat_content_inc');" /> 
 				<label for="cat_content2">Leave pages blank</label><br />
@@ -130,12 +134,13 @@ $authors = User::findAll();
 			
 			<h4>Users</h4>
 			
+			<?php /*
 			<input type="radio" class="disabled" name="page_users" id="page_users0" <?php if( $page_users == '0'): ?>checked="checked"<?php endif; ?> value="0" onchange="element_toggle( 'page_users1', 'page_users_sel1'); element_toggle( 'page_users2', 'page_users_sel2');" disabled="disabled" /> 
 				<label for="page_users1">Create New Users</label><br />
 				
 			<input type="radio" class="disabled" name="page_users" id="page_users1" <?php if( $page_users == '1'): ?>checked="checked"<?php endif; ?> value="1" onchange="element_toggle( 'page_users1', 'page_users_sel1'); element_toggle( 'page_users2', 'page_users_sel2');" disabled="disabled" /> 
 				<label for="page_users1">Associate New Users as</label>
-				<select name="page_users_sel" id="page_users_sel1" <?php if( $page_users != '1'): ?>disabled="disabled"<?php endif; ?>>
+				<select name="page_users_sel1" id="page_users_sel1" <?php if( $page_users != '1'): ?>disabled="disabled"<?php endif; ?>>
 					<?php 
 					foreach( $authors as $author) {
 						echo( $page_users_sel1 == $author->name ? '<option selected' : '<option');
@@ -143,10 +148,11 @@ $authors = User::findAll();
 					}				 
 					?>
 				</select><br />
+			*/ ?>
 				
 			<input type="radio" name="page_users" id="page_users2" <?php if( $page_users == '2'): ?>checked="checked"<?php endif; ?> value="2" onchange="element_toggle( 'page_users1', 'page_users_sel1'); element_toggle( 'page_users2', 'page_users_sel2');" />
 				<label for="page_users2">Associate all users as</label>
-				<select name="page_users_sel" id="page_users_sel2" <?php if( $page_users != '2'): ?>disabled="disabled"<?php endif; ?>>
+				<select name="page_users_sel2" id="page_users_sel2" <?php if( $page_users != '2'): ?>disabled="disabled"<?php endif; ?>>
 					<?php 
 					foreach( $authors as $author) {
 						echo( $page_users_sel2 == $author->name ? '<option selected' : '<option');
@@ -205,6 +211,8 @@ $authors = User::findAll();
 			
 			<h4>Users</h4>
 			
+			<?php /*
+			
 			<input type="radio" class="disabled" name="post_users" id="post_users0" <?php if( $post_users == '0'): ?>checked="checked"<?php endif; ?> value="0" onchange="element_toggle( 'post_users1', 'post_users_sel1'); element_toggle( 'post_users2', 'post_users_sel2');" disabled="disabled" /> 
 				<label for="post_users0">Create new users</label><br />
 				
@@ -219,7 +227,9 @@ $authors = User::findAll();
 					?>
 				</select><br />
 				
-			<input type="radio" name="post_users" id="post_users2" <?php if( $post_users == '2'): ?>checked="checked"<?php endif; ?> value="2" onchange="element_toggle( 'post_users1', 'post_users_sel1'); element_toggle( 'post_users2', 'post_users_sel2');" />
+			*/ ?>
+				
+			<input type="radio" name="post_users" id="post_users2" <?php //if( $post_users == '2'): ?>checked="checked"<?php //endif; ?> value="2" onchange="element_toggle( 'post_users1', 'post_users_sel1'); element_toggle( 'post_users2', 'post_users_sel2');" />
 				<label for="post_users2">Associate all users as</label>
 				<select name="post_users_sel2" id="post_users_sel2" <?php if( $post_users != '2'): ?>disabled="disabled"<?php endif; ?>>
 					<?php 
@@ -242,11 +252,11 @@ $authors = User::findAll();
 			
 			<h4>Placement</h4>
 			
-			<input type="radio" name="post_place" id="post_place0" <?php if( $post_place == '0'): ?>checked="checked"<?php endif; ?> value="0" onchange="element_toggle( 'post_place1', 'post_place_sel');" />
+			<input type="radio" name="post_place" id="post_place0" <?php if( $post_place == '0'): ?>checked="checked"<?php endif; ?> value="0" onchange="element_toggle( 'post_place2', 'post_place_sel');" />
 				<label for="post_place0">Wolf Home page</label><br />
-			<input type="radio" name="post_place" id="post_place1" <?php if( $post_place == '1'): ?>checked="checked"<?php endif; ?> <?php if( !$cat_import): ?>disabled="disabled"<?php endif; ?> value="1" onchange="element_toggle( 'post_place1', 'post_place_sel');" />
+			<input type="radio" name="post_place" id="post_place1" <?php if( $post_place == '1'): ?>checked="checked"<?php endif; ?> <?php if( !$cat_import): ?>disabled="disabled"<?php endif; ?> value="1" onchange="element_toggle( 'post_place2', 'post_place_sel');" />
 				<label for="post_place1">Under WP Category</label><br />
-			<input type="radio" name="post_place" id="post_place2" <?php if( $post_place == '2'): ?>checked="checked"<?php endif; ?> value="2" onchange="element_toggle( 'post_place1', 'post_place_sel');" />
+			<input type="radio" name="post_place" id="post_place2" <?php if( $post_place == '2'): ?>checked="checked"<?php endif; ?> value="2" onchange="element_toggle( 'post_place2', 'post_place_sel');" />
 				<label for="post_place2">Custom parent page</label>
 				<select name="post_place_sel" id="post_place_sel" <?php if( $post_place != '2'): ?>disabled="disabled"<?php endif; ?>>
 					<?php 

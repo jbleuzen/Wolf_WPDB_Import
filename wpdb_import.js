@@ -1,4 +1,4 @@
-/**
+/*
  * Wordpress Database Import - Wordpress to WolfCMS importing plugin
  *
  * Copyright (c) 2010 Johan BLEUZEN  and  Matthew COLEMAN
@@ -7,7 +7,7 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /*
@@ -1254,7 +1254,5 @@ $(document).ready(function(){
 			}
 		}
 	});
-	
-	 $('a#testbutton').click( function() { alert("Valid: " + $("#post_date_entry").valid()); });
 	
 });

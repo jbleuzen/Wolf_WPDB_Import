@@ -9,11 +9,14 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
+
+$directory = 'wolf/plugins/wpdb_import/uploads/';
+$filename = 'wordpress.xml';
 
 ?>
 <h1><?php echo __('WordPress Import');?></h1>
@@ -29,12 +32,13 @@ if (!defined('IN_CMS')) { exit(); }
 	</ol>
 	</div>
 	<div style="text-align:center;">
-	<?php if( file_exists ("wordpress.xml")){ ?>
-		<form action="<?php echo get_url('plugin/wpdb_import/import'); ?>" method="post">
+	<?php if( file_exists ($directory . $filename)){ ?>
+		<!-- print some information and confirmation that the file is uploaded -->
+		<form action="<?php echo get_url('plugin/wpdb_import/WPDB_import'); ?>" method="post">
 			<input style="height:25px;margin:25px 0px 15px;width:100px;" type="submit" value="<?php echo __('Import'); ?>">
 		</form>
 	<?php } else {?>
-		<form  action="<?php echo get_url('plugin/wpdb_import/upload'); ?>" method="post" enctype="multipart/form-data">
+		<form  action="<?php echo get_url('plugin/wpdb_import/WPDB_upload'); ?>" method="post" enctype="multipart/form-data">
 			<!-- max file size is 25MB -->
 			<input type="hidden" name="MAX_FILE_SIZE" value="25000000" />
 			<input type="file" name="wpdb_file">
@@ -43,5 +47,3 @@ if (!defined('IN_CMS')) { exit(); }
 	<?php } ?>
 	</div>
 </fieldset>
-
-<script type="text/javascript">alert( testFunc());</script>

@@ -9,29 +9,30 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *
  * Project home:
- *   https://github.com/jbleuzen/Wolf_WPDB_Import
+ *   https://github.com/spacez320/wpdb_import
  */
 
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
 
-define( 'MAX_FILE_SIZE', 20);				// maximum filesize for uploaded .xml in megabytes
+define( 'WPDB_MAX_FILE_SIZE', 20);				// maximum filesize for uploaded .xml in megabytes
+define( 'WPDB_DEBUG', false);					// debug mode
 
 // TODO this should reflect the user's database and required usage
-define( 'DB_TIME_FORMAT', 'Y-m-d H:i:s');	// DB time format
+define( 'WPDB_DB_TIME_FORMAT', 'Y-m-d H:i:s');	// DB time format
  
 class WPDBImportController extends PluginController {
 
-    private static function _checkPermission() {
+    private static function WPDB_checkPermission() {
         
     	AuthUser::load();
     	
         if ( !AuthUser::isLoggedIn()) redirect(get_url('login'));
     }
 
-    function __construct() {
+    public function __construct() {
     	
-        self::_checkPermission();
+        self::WPDB_checkPermission();
         
         $this->setLayout('backend');
         $this->assignToLayout('sidebar', new View('../../plugins/wpdb_import/views/sidebar'));
@@ -39,21 +40,21 @@ class WPDBImportController extends PluginController {
 
 // Public view methods -------------------------------------------------------------------------------------------------
 
-    function index() {
+    public function index() {
     	
-        $this->display('wpdb_import/views/index', array());
+        $this->display( 'wpdb_import/views/index', array());
     }
     
-    function documentation() {
+    public function documentation() {
     	
-        $this->display('wpdb_import/views/documentation', array());
+        $this->display( 'wpdb_import/views/documentation', array());
     }
     
-    function settings() {
+    public function settings() {
     	
     	// get settings
     	
-    	$result = self::getSettings();
+    	$result = self::WPDB_getSettings();
     	$settings = $result[0];
     	
     	// display with settings
@@ -98,125 +99,6 @@ class WPDBImportController extends PluginController {
     }
 
 //  Public methods, can be accessed with navigator  --------------------------------------------------------------------
-
-    	/*
-    	 * 
-    	 */
-		public function install() {
-			
-			$result 	= 'success';
-			$message	= 'Install complete.';
-    		    		
-    		// create table
-    		
-    		$sql =
-    		 
-	  			"CREATE TABLE IF NOT EXISTS ".TABLE_PREFIX."wpdb_import (
-	  			cat_import tinyint(1) NOT NULL DEFAULT '1',
-				cat_slug tinyint(1) NOT NULL DEFAULT '1',
-				cat_status enum('Draft','Preview','Published','Hidden','Archived') NOT NULL DEFAULT 'Published',
-				cat_content tinyint(4) NOT NULL DEFAULT '2',
-				cat_content_inc longtext,
-				cat_user_sel varchar(20) DEFAULT NULL,
-				cat_date tinyint(4) NOT NULL DEFAULT '0',
-				cat_date_entry date DEFAULT NULL,
-				cat_place tinyint(4) NOT NULL DEFAULT '0',
-				cat_place_sel varchar(20) DEFAULT NULL,
-				page_import tinyint(1) NOT NULL DEFAULT '1',
-				page_slug tinyint(1) NOT NULL DEFAULT '1',
-				page_status enum('Draft','Preview','Published','Hidden','Archived') NOT NULL DEFAULT 'Published',
-				page_users tinyint(4) NOT NULL DEFAULT '0',
-				page_users_sel1 varchar(20) DEFAULT NULL,
-				page_users_sel2 varchar(20) DEFAULT NULL,
-				page_date tinyint(4) NOT NULL DEFAULT '0',
-				page_date_entry date DEFAULT NULL,
-				page_place tinyint(4) NOT NULL DEFAULT '0',
-				page_place_sel varchar(20) DEFAULT NULL,
-				post_import tinyint(1) NOT NULL DEFAULT '1',
-				post_slug tinyint(1) NOT NULL DEFAULT '1',
-				post_status enum('Draft','Preview','Published','Hidden','Archived') NOT NULL DEFAULT 'Published',
-				post_users tinyint(4) NOT NULL DEFAULT '0',
-				post_users_sel1 varchar(20) DEFAULT NULL,
-				post_users_sel2 varchar(20) DEFAULT NULL,
-				post_date tinyint(4) DEFAULT NULL,
-				post_date_entry date DEFAULT NULL,
-				post_place tinyint(4) NOT NULL DEFAULT '0',
-				post_place_sel varchar(20) DEFAULT NULL,
-				post_uncat tinyint(1) NOT NULL DEFAULT '0',
-				post_uncat_sel varchar(20) DEFAULT NULL,
-				post_cat tinyint(4) NOT NULL DEFAULT '0'
-				 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;";
-    		
-	    	if( !self::_callDB( $sql)) {
-				$result = false;
-				$message = 'Could not install: creation of table failed.';	    		
-	    	};
-
-	    	// create initial entry
-	    	
-	    	$sql = 
-	    	
-			   	"INSERT INTO ".TABLE_PREFIX."wpdb_import (
-			   	cat_import, 
-			   	cat_slug, 
-			   	cat_status, 
-			   	cat_content, 
-			   	cat_user_sel,
-			   	cat_date,
-			   	cat_date_entry,
-			   	cat_place,
-			   	cat_place_sel,
-			   	page_import,
-			   	page_slug,
-			   	page_status,
-			   	page_users,
-			   	page_users_sel1,
-			   	page_users_sel2,
-			   	page_date, 
-			   	page_date_entry,
-			   	page_place,
-			   	page_place_sel,
-			   	post_import,
-			   	post_slug,
-			   	post_status,
-			   	post_users,
-			   	post_users_sel1,
-			   	post_users_sel2,
-			   	post_date,
-			   	post_date_entry,
-			   	post_place,
-			   	post_place_sel,
-			   	post_uncat,
-			   	post_uncat_sel,
-			   	post_cat) 
-			   	VALUES ('1', '1', 'Published', '2', NULL, '0', NULL, '0', NULL, '1', '1', 'Published', '0', NULL, NULL, '0', NULL, '0', NULL, '1', '1', 'Published', '0', NULL, NULL, NULL, NULL, '0', NULL, '0', NULL, '0');";
-	    	
-	    	if( !self::_callDB( $sql)) {
-				$result = false;
-				$message = 'Could not install: initialization of table failed.';	    		
-	    	};
-	    	
-	    	Flash::set( $result, __( $message));
-	    	
-			redirect( get_url( 'plugin/wpdb_import/'));
-    	}
-    	
-    	/**
-    	 * 
-    	 *   TODO error checking on sql call
-    	 */
-    	public function uninstall() {
-    		
-    		// remove table
-    		
-    		$sql = "DROP TABLE ".TABLE_PREFIX."wpdb_import;";
-    		
-    		self::_callDB( $sql);
-    		
-    		Flash::set( 'success', __( 'Uninstall complete.'));
-			redirect( get_url( 'plugin/'));
-    	}
-    	
     	
     	/**
     	 * 
@@ -224,7 +106,7 @@ class WPDBImportController extends PluginController {
     	 * TODO add calendar functionality
     	 * TODO error checking on sql call
     	 */
-    	public function setSettings() {
+    	public function WPDB_setSettings() {
     		
     		$cat_content_inc = '\'\'';	// contents of category include
     		
@@ -270,9 +152,9 @@ class WPDBImportController extends PluginController {
 	  			$sql .= 'page_status = \''.$_POST['page_status'] . '\', ';
 				$sql .= 'page_users = '.$_POST['page_users'] . ', ';
 				if( $_POST['page_users'] == 1) 
-					$sql .= 'page_users_sel1 = \''.$_POST['page_users_sel'] . '\', ';
+					$sql .= 'page_users_sel1 = \''.$_POST['page_users_sel1'] . '\', ';
 				if( $_POST['page_users'] == 2)
-					$sql .= 'page_users_sel2 = \''.$_POST['page_users_sel'] . '\', ';
+					$sql .= 'page_users_sel2 = \''.$_POST['page_users_sel2'] . '\', ';
 				$sql .= 'page_date = '.$_POST['page_date'] . ', ';
 				if( $_POST['page_date'] == 2 && isset( $_POST['page_date_entry']))
 					$sql .= 'page_date_entry = \''.$_POST['page_date_entry'] . '\', ';
@@ -292,9 +174,9 @@ class WPDBImportController extends PluginController {
 				$sql .= 'post_status = \''.$_POST['post_status'] . '\', ';
 				$sql .= 'post_users = '.$_POST['post_users'] . ', ';
 				if( $_POST['post_users'] == 1) 
-					$sql .= 'post_users_sel1 = \''.$_POST['post_users_sel'] . '\', ';
+					$sql .= 'post_users_sel1 = \''.$_POST['post_users_sel1'] . '\', ';
 				if( $_POST['post_users'] == 2)
-					$sql .= 'post_users_sel2 = \''.$_POST['post_users_sel'] . '\', ';
+					$sql .= 'post_users_sel2 = \''.$_POST['post_users_sel2'] . '\', ';
 				$sql .= 'post_date = '.$_POST['post_date'] . ', ';
 				if( $_POST['post_date'] == 2 && isset( $_POST['post_date_entry']))
 					$sql .= 'post_date_entry = \''.$_POST['post_date_entry'] . '\', ';
@@ -308,7 +190,7 @@ class WPDBImportController extends PluginController {
     		}
     		$sql .= ' LIMIT 1;';
     		
-    		self::_callDB( $sql);
+    		self::WPDB_callDB( $sql);
 	    	
 	    	Flash::set( 'success', __( 'Settings updated.'));
 	    	
@@ -319,13 +201,13 @@ class WPDBImportController extends PluginController {
     	 * 
     	 * Enter description here ...
     	 */
-    	public function getSettings() {
+    	public function WPDB_getSettings() {
     		
     		// get settings
     		
     		$sql = 'SELECT * FROM '.TABLE_PREFIX.'wpdb_import LIMIT 1;';
     		
-    		if( $result = self::_callDB( $sql, true)) return $result;
+    		if( $result = self::WPDB_callDB( $sql, true)) return $result;
     		else return false;	
     	}
     
@@ -333,13 +215,23 @@ class WPDBImportController extends PluginController {
     	 * 
     	 * Enter description here ...
     	 */
-		public function upload() {
+		public function WPDB_upload() {
+			
+			error_reporting( E_ALL);
+			ini_set("display_errors", 1); 
+			
+			// TODO fix this
+			if( DEBUG === true) {
+				error_reporting( E_ALL);
+				ini_set("display_errors", 1); 
+			}
 			
 			$result = 'success';						// result status
 			$message = 'File uploaded successfully.';	// result message
 			
-			$fileTmpName = '';							// the actual uploaded file name
-			$filename = 'wordpress.xml';				// .xml name to force
+			$fileTmpName = '';									// the actual uploaded file name
+			$directory = 'wolf/plugins/wpdb_import/uploads/';	// directory for uploads
+			$filename = 'wordpress.xml';						// .xml name to force
 
 			// check the HTML/PHP upload
 			
@@ -371,15 +263,25 @@ class WPDBImportController extends PluginController {
 			
 			// check file size
 			
-			if( $result != 'error' && ( $_FILES['wpdb_file']['size'] > MAX_FILE_SIZE * 1024 * 1024)) {
+			if( $result != 'error' && ( $_FILES['wpdb_file']['size'] > WPDB_MAX_FILE_SIZE * 1024 * 1024)) {
 				$result = 'error';
 				$message = sprintf( 'Uploaded file is too heavy, it must not be over %d MB.',  
-					MAX_FILE_SIZE);
+					WPDB_MAX_FILE_SIZE);
+			}
+			
+			// make upload directory
+			
+			if( !is_dir( $directory)) {
+				if( $result != 'error' && !mkdir( $directory)) {
+					$result = 'error';
+					$message = 'Upload directory could not be created.  Permissions error?'; 
+				}
 			}
 			
 			// force the name of the uploaded file
 			
-			if( $result != 'error' && !move_uploaded_file( $fileTmpName, $filename)) {
+			if( $result != 'error' && !move_uploaded_file( $fileTmpName, $directory . $filename)) {
+				
 				$result = 'error';
 				
 				// TODO give a proper error message
@@ -397,19 +299,31 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * Enter description here ...
 		 */
-		public function import() {
+		public function WPDB_import() {
+			
+			$directory = 'wolf/plugins/wpdb_import/uploads/';	// directory for uploads
+			$filename = 'wordpress.xml';						// .xml name to force
+						
+			error_reporting( E_ALL);
+			ini_set("display_errors", 1); 
+			
+			// TODO fix this
+			if( DEBUG === true) {
+				error_reporting( E_ALL);
+				ini_set("display_errors", 1); 
+			}
 			
 			$result = 'success';				// result status
-			$message = 'Import successful!';	// result message
+			$message = 'Import successful';	// result message
 			
 			// get settings
 			
-			$results = self::getSettings();
+			$results = self::WPDB_getSettings();
 			$settings = $results[0];
 
 			// remove xml namespaces
 			
-			if ( $result != 'error' && !( $xml = self::_removeNameSpacesInXml())) {
+			if ( $result != 'error' && !( $xml = self::WPDB_removeNameSpacesInXml())) {
 				$result = 'error';
 				
 				// TODO give a proper error message
@@ -417,9 +331,9 @@ class WPDBImportController extends PluginController {
 			}
 			
 			// import categories
-			
+
 			if( $settings['cat_import']) {
-				if( $result != 'error' && !self::_importCategories( $xml, $settings)) {
+				if( $result != 'error' && !self::WPDB_importCategories( $xml, $settings)) {
 					$result = 'error';
 					$message = 'Failed to import WP categories.';
 				}
@@ -428,10 +342,22 @@ class WPDBImportController extends PluginController {
 			// import pages & posts
 			
 			if( $settings['page_import'] || $settings['post_import']) {
-				if( result != 'error' && !self::_importContents( $xml, $settings)) {
+				if( $result != 'error' && !self::WPDB_importContents( $xml, $settings)) {
 					$result = 'error';
 					$message = 'Failed to import WP pages and posts.';
 				}
+			}
+			
+			// attempt to remove the file
+			
+			if( $result != 'error') {
+				if( !rename( 'wolf/plugins/wpdb_import/uploads/wordpress.xml', 'wolf/plugins/wpdb_import/uploads/wordpress.xml.old'))
+					$message = $message . ' Could not rename the .xml file, however.';
+			}
+			
+			if( $result != 'error') {
+				if( !self::WPDB_deleteFile( false)) $message .= ', but could not clean up (delete WP .xml file).';
+				else $message .= '!';
 			}
 			
 			Flash::set( $result, __( $message));
@@ -444,21 +370,25 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * Enter description here ...
 		 */
-		public function deleteWPFile() {
+		public function WPDB_deleteFile( $redirect = true) {
 			
-			$result = 'success';						// result status
-			$message = 'The file has been deleted.';	// result message
+			$result 		= 'success';					// result status
+			$deleteStatus	= '';							// return status of unlink()
+			$message 		= 'The file has been deleted.';	// result message
 			
 			// unlink file
 			
-			if( !unlink( 'wordpress.xml')) {
+			if( $deleteStatus = !unlink( 'wolf/plugins/wpdb_import/uploads/wordpress.xml')) {
 				$result = 'error';
 				$message = 'The file could not be deleted.';
 			}
 			
-			Flash::set( $result, $message);
-			
-			redirect( get_url('plugin/wpdb_import'));
+			if( $redirect) {
+				Flash::set( $result, $message);
+				redirect( get_url('plugin/wpdb_import'));
+			} else {
+				return $deleteStatus;
+			}
 		}
 	
 //  Private methods  ---------------------------------------------------------------------------------------------------
@@ -469,12 +399,12 @@ class WPDBImportController extends PluginController {
 		 * 
 		 *  @return SimpleXML
 		 */
-		private function _removeNameSpacesInXml(){
+		private function WPDB_removeNameSpacesInXml(){
 			
 			// get file contents
 			// TODO error check file_get_contents
 			
-			$feed = file_get_contents( "wordpress.xml");
+			$feed = file_get_contents( "wolf/plugins/wpdb_import/uploads/wordpress.xml");
 			
 			// remove namespaces
 			
@@ -492,17 +422,19 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * 
 		 */
-		private function _insertPage( $data) {
+		private function WPDB_insertPage( $data) {
 						
 			$result = $data[0];		// return value
 		
 			// form PDOStatement with ? placeholders
 			
-			$sql = 'INSERT INTO '.TABLE_PREFIX.'page (id, title, slug, created_on, published_on, parent_id, layout_id, status_id, created_by_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+			// TODO make this an array so we can dynamically add fields 
+			
+			$sql = 'INSERT INTO '.TABLE_PREFIX.'page (id, title, slug, breadcrumb, created_on, published_on, parent_id, layout_id, status_id, created_by_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 			
 			// access Wolf CMS DB to insert page
 			
-			if( !self::_callDB( $sql, false, $data)) $result = false;
+			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
 			
 			// return result
 			
@@ -513,7 +445,7 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * 
 		 */
-		private function _insertPart( $pageId, $content){
+		private function WPDB_insertPart( $pageId, $content){
 			
 			$result = $pageId;		// return value
 
@@ -525,7 +457,7 @@ class WPDBImportController extends PluginController {
 			
 			// access Wolf CMS DB to insert page part
 			
-			if( !self::_callDB( $sql, false, $part_array)) $result = false;
+			if( !self::WPDB_callDB( $sql, false, $part_array)) $result = false;
 			
 			// return result
 			
@@ -536,7 +468,7 @@ class WPDBImportController extends PluginController {
 		 * 
 	 	 * Creates a new comment
 	 	 */
-		private function _insertComment( $data){
+		private function WPDB_insertComment( $data){
 			
 			$result = $data[0];		// return value
 
@@ -546,7 +478,7 @@ class WPDBImportController extends PluginController {
 		  		
 		  	// access Wolf CMS DB to insert comment
 		  	
-			if( !self::_callDB( $sql, false, $data)) $result = false;
+			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
 			
 			// return result
 			
@@ -557,7 +489,7 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * TODO Custom error messages?
 		 */
-		private function _importCategories( $xml, $settings){
+		private function WPDB_importCategories( $xml, $settings){
 			
 			$result 		= true;	// output
 			$recordOffset 	= 1;	// offset from Record::lastInsertId()
@@ -565,6 +497,7 @@ class WPDBImportController extends PluginController {
 			$id 			= '';
 			$slug 			= '';
 			$title 			= '';
+			$breadcrumb		= '';
 			$userId 		= '';
 			$statusId 		= '';
 			$parentId 		= '';
@@ -633,7 +566,7 @@ class WPDBImportController extends PluginController {
 					break;
 					
 				case '1' :
-					$parentId = self::_getCategoryByName( $settings['cat_place_sel']);
+					$parentId = self::WPDB_getCategoryByName( $settings['cat_place_sel']);
 					break;
 			}
 			
@@ -643,7 +576,7 @@ class WPDBImportController extends PluginController {
 			switch( $settings['cat_date']) {
 				
 				case '0' :
-					$datePublished = date( DB_TIME_FORMAT);
+					$datePublished = date( WPDB_DB_TIME_FORMAT);
 					break;
 					
 				case '1' :
@@ -672,11 +605,11 @@ class WPDBImportController extends PluginController {
 				$iteration = 0;
 				
 				if( $settings['cat_slug']) {
-					if( self::_checkSlugExists( $slug) !== false) continue;
+					if( self::WPDB_checkSlugExists( $slug) !== false) continue;
 				}
 				else {
-					if( self::_checkSlugExists( $slug) !== false) {
-						while( self::_checkSlugExists( $slug . $iteration) !== false) {
+					if( self::WPDB_checkSlugExists( $slug) !== false) {
+						while( self::WPDB_checkSlugExists( $slug . $iteration) !== false) {
 							$iteration++;
 						}
 						$slug = $slug . $iteration;
@@ -685,9 +618,15 @@ class WPDBImportController extends PluginController {
 				
 				// check if the id exists and rename if needed
 				
-				while( self::_checkPageIdExists( $id)) {	
+				while( self::WPDB_checkPageIdExists( $id)) {	
 					$id = Record::lastInsertId() + $recordOffset++;	
 				}
+				
+				// make the breadcrumb
+				
+				// TODO this is just from observation, is there a better way to do this?
+				
+				$breadcrumb = $title;
 								
 				/* BUILD CATEGORY IMPORT */
 
@@ -698,6 +637,7 @@ class WPDBImportController extends PluginController {
 					$id,
 					$title, 
 					$slug, 
+					$breadcrumb,
 					$datePublished, 
 					$datePublished, 
 					$parentId, 
@@ -710,7 +650,7 @@ class WPDBImportController extends PluginController {
 				
 				// insert category
 				
-				$categoryId = self::_insertPage( $data);
+				$categoryId = self::WPDB_insertPage( $data);
 				
 				// TODO just because one fails doesn't mean they all should fail
 				
@@ -721,7 +661,7 @@ class WPDBImportController extends PluginController {
 				
 				// insert category content
 				
-				$partId = self::_insertPart( $categoryId, $content);
+				$partId = self::WPDB_insertPart( $categoryId, $content);
 				
 				// TODO just because one fails doesn't mean they all should fail
 	
@@ -738,24 +678,33 @@ class WPDBImportController extends PluginController {
 		 * 
 		 *
 		 */
-		private function _importContents( $xml, $settings) {
+		private function WPDB_importContents( $xml, $settings) {
+			
+			// TODO turn this into the import log file
+			if( !( $fp = fopen('wolf/plugins/wpdb_import/uploads/import.log', 'w'))) exit( 'Could not open log file for writings.');
+			
+			/*
+			print_r( $xml);
+			exit( ob_get_clean());
+			*/
 			
 			$result = true;			// return value
 			
 			$recordOffset 	= 1;	// offset from Record::lastInsertId()
 			
-			$id 			= '';
-			$slug 			= '';
-			$title 			= '';
-			$userId 		= '';
-			$statusId 		= '';
-			$parentId 		= '';
-			$datePublished 	= '';
-			$layoutId 		= '';
-			$content 		= '';
-			$category 		= '';
-			$postType 		= '';
-			$commentStatus	= '';
+			$id 				= '';
+			$slug 				= '';
+			$title 				= '';
+			$breadcrumb			= '';
+			$userId 			= '';
+			$statusId 			= '';
+			$parentId 			= '';
+			$datePublished 		= '';
+			$layoutId 			= '';
+			$content 			= '';
+			$category 			= '';
+			$postType 			= '';
+			$commentStatus		= '';
 			
 	
 			$dateParse			= '';	// parsed date
@@ -768,13 +717,14 @@ class WPDBImportController extends PluginController {
 			
 			$category_array 	= '';	// array for placing a new categorization page
 
-			foreach ( $xml->channel->item as $item){
+			foreach ( $xml->channel->item as $item) {
 				
 				$id 			= $item->post_id;
 				$slug 			= (string) $item->post_name;
 				$title 			= (string) $item->title;
 				$userId			= (string) $item->creator;
-				$category 		= isset( $item->category) ? $item->category : null;
+				// TODO make sure that we are checking category existence properly
+				$category		= (string) $item->category[0]->attributes()->domain == 'category' ? $item->category[0] : $item->category[1];
 				$postType 		= (string) $item->post_type;
 				$commentStatus 	= ( $item->comment_status != 'open') ? 0 : 1;
 			
@@ -784,17 +734,15 @@ class WPDBImportController extends PluginController {
 				
 				// differentiate between pages and posts
 				
-				if( $postType)
-				
 				if( $postType == "page" && $settings['page_import']) {
 					
 					/* GET PAGE DATA */
 				
 					// get upload user
 					
-					$checkUser = self::_checkUserExists( $user);
+					$checkUser = self::WPDB_checkUserExists( $userId);
 					
-					switch( $settings['page_user']) {
+					switch( $settings['page_users']) {
 						
 						case '0' :
 							// TODO add custom user
@@ -802,11 +750,11 @@ class WPDBImportController extends PluginController {
 							break;
 							
 						case '1' :
-							if( !$checkUser) $user = $settings['page_user_sel1'];
+							if( !$checkUser) $userId = $settings['page_users_sel1'];
 							break;
 							
 						case '2' :
-							$user = $settings['page_user_sel2'];
+							$userId = $settings['page_users_sel2'];
 							break;		
 					}
 					
@@ -841,7 +789,7 @@ class WPDBImportController extends PluginController {
 					switch( $settings['page_date']) {
 						
 						case '0' :
-							$datePublished = date( DB_TIME_FORMAT);
+							$datePublished = date( WPDB_DB_TIME_FORMAT);
 							break;
 							
 						case '1' :
@@ -862,7 +810,7 @@ class WPDBImportController extends PluginController {
 							break;
 							
 						case '1' :
-							$parentId = self::_getCategoryByName( $settings['page_place_sel']);
+							$parentId = self::WPDB_getCategoryByName( $settings['page_place_sel']);
 							break;
 					}
 					
@@ -871,28 +819,25 @@ class WPDBImportController extends PluginController {
 					$iteration = 0;
 					
 					if( $settings['page_slug'])
-						if( self::_checkSlugExists($slug) !== false) continue;
+						if( self::WPDB_checkSlugExists($slug) !== false) continue;
 					else {
-						if( self::_checkSlugExists( $slug) !== false) {
-							while( self::_checkSlugExists( $slug . $iteration) !== false) {
+						if( self::WPDB_checkSlugExists( $slug) !== false) {
+							while( self::WPDB_checkSlugExists( $slug . $iteration) !== false) {
 								$iteration++;
 							}
 							$slug = $slug . $iteration;
 						}
 					}
+				// end if-page
 				} elseif( $postType == "post" && $settings['post_import']) {
-					
-					if( $title == 'Sample Page') {
-						exit( 'yep');
-					}
 					
 					/* GET POST DATA */
 				
 					// get upload user
 					
-					$checkUser = self::_checkUserExists( $user);
+					$checkUser = self::WPDB_checkUserExists( $userId);
 					
-					switch( $settings['post_user']) {
+					switch( $settings['post_users']) {
 						
 						case '0' :
 							// TODO make a new user
@@ -900,14 +845,14 @@ class WPDBImportController extends PluginController {
 							break;
 							
 						case '1' :
-							if( !$checkUser) $user = $settings['post_user_sel1'];
+							if( !$checkUser) $userId = $settings['post_users_sel1'];
 							break;
 							
 						case '2' :
-							$user = $settings['post_user_sel2'];
+							$userId = $settings['post_users_sel2'];
 							break;
 					}
-					
+				
 					// get upload status
 	    			
 					switch( $settings['post_status']) {
@@ -939,7 +884,7 @@ class WPDBImportController extends PluginController {
 					switch( $settings['post_date']) {
 						
 						case '0' :
-							$datePublished = date( DB_TIME_FORMAT);
+							$datePublished = date( WPDB_DB_TIME_FORMAT);
 							break;
 							
 						case '1' :
@@ -961,16 +906,17 @@ class WPDBImportController extends PluginController {
 							
 						case '1' :
 							if( $category != null && $category != 'Uncategorized')
-								$parentId = self::_getCategoryByName( $category);
+								$parentId = self::WPDB_getCategoryByName( $category);
 							else {
 								if( $settings['post_uncat'] )
-									$parentId = self::_getCategoryByName( $settings['post_uncat_sel']);
+									$parentId = self::WPDB_getCategoryByName( $settings['post_uncat_sel']);
 								else $parentId = 1;
 							}
 							break;
 							
 						case '2' :
-							$parentId = self::_getCategoryByName( $settings['post_place_sel']);
+							
+							$parentId = self::WPDB_getCategoryByName( $settings['post_place_sel']);
 							break;
 					}
 					
@@ -1006,7 +952,7 @@ class WPDBImportController extends PluginController {
 								
 								// TODO get check page id working and make it a seperate function
 								
-								while( self::_checkPageIdExists( $newId)) {
+								while( self::WPDB_checkPageIdExists( $newId)) {
 									$newId += $newIdOffset++;
 								}
 
@@ -1015,6 +961,7 @@ class WPDBImportController extends PluginController {
 								$category_array = array(
 									$newId,
 									$year, 
+									$year,
 									$year, 
 									$datePublished, 
 									$datePublished, 
@@ -1028,7 +975,7 @@ class WPDBImportController extends PluginController {
 								
 								// TODO check insert Page success
 					
-								$currentYearCatId = self::_insertPage( $category_array);
+								$currentYearCatId = self::WPDB_insertPage( $category_array);
 							}
 							
 							// change the parentId to the current categorization page
@@ -1042,73 +989,91 @@ class WPDBImportController extends PluginController {
 							$year 	= $dateParse['year'];
 							$month 	= $dateParse['month'];
 							
-							// TODO check that we're not trying to duplicate a page (checkSlug)
-								
 							if( $currentYear != $year) {
 								
-								// need to change year and add a new year page
-								
-								// get a new id
-								
-								$newId 			= Record::lastInsertId() + 1;
-								$newIdOffset 	= 0;
-								
-								while( self::_checkPageIdExists( $newId)) {
-									$newId += $newIdOffset++;
-								}
-								
-								// place a new year page
-								
-								$category_array = array(
-									$newId,
-									$year, 
-									$year, 
-									$datePublished, 
-									$datePublished, 
-									$parentId, 
-									$layoutId, 
-									$statusId, 
-									$userId
-								);
+								// update current year
 								
 								$currentYear = $year;
 								
-								// TODO check insert Page success
-					
-								$currentYearCatId = self::_insertPage( $category_array);
+								// check whether or not a year already exists
+								
+								if( $test = self::WPDB_checkSlugExists( $year)) $currentYearCatId = $test->id;
+								else {
+
+									// need to change year and add a new year page
+
+									// TODO make this into a common function
+									// get a new id
+									
+									$newId 			= Record::lastInsertId() + 1;
+									$newIdOffset 	= 0;
+									
+									while( self::WPDB_checkPageIdExists( $newId)) {
+										$newId += $newIdOffset++;
+									}
+									
+									// place a new year page
+									
+									$category_array = array(
+										$newId,
+										$year, 
+										$year, 
+										$year,
+										$datePublished, 
+										$datePublished, 
+										$parentId, 
+										$layoutId, 
+										$statusId, 
+										$userId
+									);
+									
+									// TODO check insert Page success
+						
+									$currentYearCatId = self::WPDB_insertPage( $category_array);
+								}
 							}
 								
 							if( $currentMonth != $month) {
 								
-								// need to change month and add a new month page
-								
-								// get a new id
-
-								$newId 			= Record::lastInsertId() + 1;
-								$newIdOffset 	= 0;
-								
-								while( self::_checkPageIdExists( $newId)) {
-									$newId += $newIdOffset++;
-								}
-								
-								// place a new month page
-								
-								$category_array = array(
-									$newId,
-									$month . '-' . $year, 
-									$month . '-' . $year, 
-									$datePublished, 
-									$datePublished, 
-									$currentYearCatId, 
-									$layoutId, 
-									$statusId, 
-									$userId
-								);
-								
 								$currentMonth = $month;
 								
-								$currentMonthCatId = self::_insertPage( $category_array);
+								fwrite( $fp, "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
 								
+								// need to change month and add a new month page
+								
+								// need to check if month already exists
+								
+								if( $test = self::WPDB_checkSlugExists( $month . '-' . $year)) $currentMonthCatId = $test->id; 
+								else {
+									
+									// get a new id
+	
+									$newId 			= Record::lastInsertId() + 1;
+									$newIdOffset 	= 0;
+									
+									while( self::WPDB_checkPageIdExists( $newId)) {
+										$newId += $newIdOffset++;
+									}
+									
+									// place a new month page
+									
+									$category_array = array(
+										$newId,
+										$month . '-' . $year, 
+										$month . '-' . $year,
+										$month . '-' . $year, 
+										$datePublished, 
+										$datePublished, 
+										$currentYearCatId, 
+										$layoutId, 
+										$statusId, 
+										$userId
+									);
+									
+									// TODO check insertPage success
+																		
+									$currentMonthCatId = self::WPDB_insertPage( $category_array);
+								}
 							}
 							
 							// change the parentId to the current categorization page
@@ -1127,132 +1092,171 @@ class WPDBImportController extends PluginController {
 								
 							if( $currentYear != $year) {
 								
-								// need to change year and add a new year page
-								
-								// get a new id
-								
-								$newId 			= Record::lastInsertId() + 1;
-								$newIdOffset 	= 0;
-								
-								while( self::_checkPageIdExists( $newId)) {
-									$newId += $newIdOffset++;
-								}
-								
-								// place a new year page
-								
-								$category_array = array(
-									$newId,
-									$year, 
-									$year, 
-									$datePublished, 
-									$datePublished, 
-									$parentId, 
-									$layoutId, 
-									$statusId, 
-									$userId
-								);
+								// update current year
 								
 								$currentYear = $year;
 								
-								// TODO check insert Page success
-					
-								$currentYearCatId = self::_insertPage( $category_array);
+								// check whether or not a year already exists
+								
+								if( $test = self::WPDB_checkSlugExists( $year)) $currentYearCatId = $test->id;
+								else {
+
+									// need to change year and add a new year page
+
+									// TODO make this into a common function
+									// get a new id
+									
+									$newId 			= Record::lastInsertId() + 1;
+									$newIdOffset 	= 0;
+									
+									while( self::WPDB_checkPageIdExists( $newId)) {
+										$newId += $newIdOffset++;
+									}
+									
+									// place a new year page
+									
+									$category_array = array(
+										$newId,
+										$year, 
+										$year, 
+										$year,
+										$datePublished, 
+										$datePublished, 
+										$parentId, 
+										$layoutId, 
+										$statusId, 
+										$userId
+									);
+									
+									// TODO check insert Page success
+						
+									$currentYearCatId = self::WPDB_insertPage( $category_array);
+								}
 							}
 								
 							if( $currentMonth != $month) {
 								
-								// need to change month and add a new month page
-								
-								// get a new id
-
-								$newId 			= Record::lastInsertId() + 1;
-								$newIdOffset 	= 0;
-								
-								while( self::_checkPageIdExists( $newId)) {
-									$newId += $newIdOffset++;
-								}
-								
-								// place a new month page
-								
-								$category_array = array(
-									$newId,
-									$month, 
-									$year . '-' . $month, 
-									$datePublished, 
-									$datePublished, 
-									$currentYearCatId, 
-									$layoutId, 
-									$statusId, 
-									$userId
-								);
-								
 								$currentMonth = $month;
 								
-								$currentMonthCatId = self::_insertPage( $category_array);
+								fwrite( $fp, "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
 								
+								// need to change month and add a new month page
+								
+								// need to check if month already exists
+								
+								if( $test = self::WPDB_checkSlugExists( $month . '-' . $year)) $currentMonthCatId = $test->id; 
+								else {
+									
+									// get a new id
+	
+									$newId 			= Record::lastInsertId() + 1;
+									$newIdOffset 	= 0;
+									
+									while( self::WPDB_checkPageIdExists( $newId)) {
+										$newId += $newIdOffset++;
+									}
+									
+									// place a new month page
+									
+									$category_array = array(
+										$newId,
+										$month . '-' . $year, 
+										$month . '-' . $year,
+										$month . '-' . $year, 
+										$datePublished, 
+										$datePublished, 
+										$currentYearCatId, 
+										$layoutId, 
+										$statusId, 
+										$userId
+									);
+									
+									// TODO check insertPage success
+																		
+									$currentMonthCatId = self::WPDB_insertPage( $category_array);
+								}
 							}
 							
 							if( $currentDate != $date) {
 								
-								// need to change date and add a new date page
-								
-								// get a new id
-
-								$newId 			= Record::lastInsertId() + 1;
-								$newIdOffset 	= 0;
-								
-								while( self::_checkPageIdExists( $newId)) {
-									$newId += $newIdOffset++;
-								}
-								
-								// place a new date page
-								
-								$category_array = array(
-									$newId,
-									$month, 
-									$year . '-' . $month . '-' . $date, 
-									$datePublished, 
-									$datePublished, 
-									$currentMonthCatId, 
-									$layoutId, 
-									$statusId, 
-									$userId
-								);
-								
 								$currentDate = $date;
 								
-								$currentDateCatId = self::_insertPage( $category_array);
+								// need to change date and add a new date page
 								
+								if( $test = self::WPDB_checkSlugExists( $date . '-' . $month . '-' . $year)) $currentDateCatId = $test->id; 
+								else {
+								
+									// get a new id
+	
+									$newId 			= Record::lastInsertId() + 1;
+									$newIdOffset 	= 0;
+									
+									while( self::WPDB_checkPageIdExists( $newId)) {
+										$newId += $newIdOffset++;
+									}
+									
+									// place a new date page
+									
+									$category_array = array(
+										$newId,
+										$date, 
+										$date . '-' . $month . '-' . $year,
+										$date . '-' . $month . '-' . $year,
+										$datePublished, 
+										$datePublished, 
+										$currentMonthCatId, 
+										$layoutId, 
+										$statusId, 
+										$userId
+									);
+									
+									$currentDate = $date;
+									
+									$currentDateCatId = self::WPDB_insertPage( $category_array);
+								}
 							}
 							
 							// change the parentId to the current categorization page
 							
 							$parentId = $currentDateCatId;
 							
-							break;					
+							break;
+					// end switch					
 					}
+					
+					
 					
 					// check if slug exists and rename if needed
 					
 					$iteration = 0;
 					
-					if( !$settings['post_slug'])
-						if( self::_checkSlugExists( $slug) !== false) continue;
+					if( $settings['post_slug']) {
+						// TODO fix continue bug
+						if( self::WPDB_checkSlugExists( $slug) !== false) continue;
+					}
 					else {	
-						if( self::_checkSlugExists( $slug) !== false) {
-							while( self::_checkSlugExists( $slug . $iteration) !== false) {
+						if( self::WPDB_checkSlugExists( $slug) !== false) {
+							while( self::WPDB_checkSlugExists( $slug . $iteration) !== false) {
 								$iteration++;
 							}
 							$slug = $slug . $iteration;
 						}
 					}
+					
+				// end if post
 				} else continue;
 				
 				// check if the id exists and rename if needed
 				
-				while( self::_checkPageIdExists( $id)) {
+				while( self::WPDB_checkPageIdExists( $id)) {
 					$id = Record::lastInsertId() + $recordOffset++;	
 				}
+				
+				// make the breadcrumb
+				
+				// TODO this is just from observation, is there a better way to do this?
+				
+				$breadcrumb = $title;
 				
 				// get content
 				
@@ -1267,6 +1271,7 @@ class WPDBImportController extends PluginController {
 					$id,
 					$title, 
 					$slug, 
+					$breadcrumb,
 					$datePublished, 
 					$datePublished, 
 					$parentId, 
@@ -1274,14 +1279,16 @@ class WPDBImportController extends PluginController {
 					$statusId, 
 					$userId
 				);
-					
+						
+				//if( !fwrite($fp, 'Post "' . $title . '" has $parendId of ' . $parentId . "\n")) exit( 'Could not write to log file.');
+			
 				/* INSERT PAGE/POST */
 	
 				// insert page
 				
 				// TODO just because one fails doesn't mean they all should fail
 				
-				$pageId = self::_insertPage( $page_array);
+				$pageId = self::WPDB_insertPage( $page_array);
 				
 				if( !$pageId) {
 					$result = false;
@@ -1290,7 +1297,7 @@ class WPDBImportController extends PluginController {
 
 				// insert page content
 				
-				$partId = self::_insertPart( $pageId, $content);
+				$partId = self::WPDB_insertPart( $pageId, $content);
 	
 				if( !$partId) {
 					$result = false;
@@ -1298,7 +1305,10 @@ class WPDBImportController extends PluginController {
 				}
 
 				// TODO insert comments
+			// end foreach
 			}
+			
+			fclose( $fp);
 			
 			return $result;
 		}
@@ -1306,7 +1316,7 @@ class WPDBImportController extends PluginController {
 		/**
 		 * Imports comments of $pageId post
 		 */
-		private function _importComments( $pageId, $xml) {
+		private function WPDB_importComments( $pageId, $xml) {
 			
 			$author		= '';
 			$mail		= '';
@@ -1337,7 +1347,7 @@ class WPDBImportController extends PluginController {
 					$approved
 				);
 					
-				self::_insertComment( $data);
+				self::WPDB_insertComment( $data);
 			}
 		}
 
@@ -1347,7 +1357,7 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * TODO 
 		 */
-		private function _importUsers( $xml, $defaultPassword) {
+		private function WPDB_importUsers( $xml, $defaultPassword) {
 			
 			$id			= '';
 			$username	= '';
@@ -1372,7 +1382,7 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * 
 		 */
-		private function _renameSlug( $slug) {
+		private function WPDB_renameSlug( $slug) {
 			
 		}
 		
@@ -1380,7 +1390,7 @@ class WPDBImportController extends PluginController {
 		 * 
 		 * 
 		 */
-		private function _checkUserExists( $username){
+		private function WPDB_checkUserExists( $username){
 			
 			$userId = false;	// return id
 			
@@ -1401,7 +1411,7 @@ class WPDBImportController extends PluginController {
 		/**
 		 * 
 		 */
-		private function _makeUser() {
+		private function WPDB_makeUser() {
 			
 			$name 		= '';
 			$password 	= '';
@@ -1425,8 +1435,10 @@ class WPDBImportController extends PluginController {
 		 * Checks if $slug is a valid page in WolfCMS
 		 * 
 		 */
-		private function _checkSlugExists( $slug) {
+		private function WPDB_checkSlugExists( $slug) {
 		
+			// TODO replace with Page::findBySlug and return the page id
+			
 			$filter = array(
 				'where' => 'slug = "' . $slug . '"',
 				'limit' => 1
@@ -1438,7 +1450,7 @@ class WPDBImportController extends PluginController {
 		/**
 		 * 
 		 */
-		private function _checkPageIdExists( $id) {
+		private function WPDB_checkPageIdExists( $id) {
 			
 			return Page::findById( $id);
 		}
@@ -1446,7 +1458,7 @@ class WPDBImportController extends PluginController {
 		/** 
 		 * 
 		 */
-		private function _getCategoryByName( $category){
+		private function WPDB_getCategoryByName( $category){
 			
 			$result = false;
 			
@@ -1463,11 +1475,8 @@ class WPDBImportController extends PluginController {
 			return $result;
 		}
 		
-		/**
-		 * 
-		 */
-		private function _callDB( $sql, $fetch = false, $data = null) {
-			
+		public function WPDB_callDB( $sql, $fetch = false, $data = null) {
+					
 			// TODO should we use $pdo->setAttribute
 			// $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 			
@@ -1507,3 +1516,5 @@ class WPDBImportController extends PluginController {
 			return $fetch ? $stm->fetchAll() : true;
 		}
 }
+
+?>
