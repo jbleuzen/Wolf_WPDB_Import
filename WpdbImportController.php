@@ -3,7 +3,7 @@
 /*
  * Wordpress Database Import - Wordpress to WolfCMS importing plugin
  *
- * Copyright (c) 2010 Johan BLEUZEN  and  Matthew COLEMAN
+ * Copyright (c) 2010 Johan BLEUZEN and Matthew COLEMAN
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
@@ -15,13 +15,16 @@
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
 
-define( 'WPDB_MAX_FILE_SIZE', 20);				// maximum filesize for uploaded .xml in megabytes
-define( 'WPDB_DEBUG', false);					// debug mode
+define( 'WPDB_MAX_FILE_SIZE', 	20); 	// maximum filesize for uploaded .xml in megabytes
+define( 'WPDB_DEBUG', 			true); 	// debug mode
+define( 'WPDB_LOGGING', 		true); 	// logging
 
 // TODO this should reflect the user's database and required usage
 define( 'WPDB_DB_TIME_FORMAT', 'Y-m-d H:i:s');	// DB time format
  
 class WPDBImportController extends PluginController {
+	
+	private $logfp = null;	// file-pointer for the import log file	
 
     private static function WPDB_checkPermission() {
         
@@ -211,17 +214,10 @@ class WPDBImportController extends PluginController {
     		else return false;	
     	}
     
-    	/**
-    	 * 
-    	 * Enter description here ...
-    	 */
 		public function WPDB_upload() {
 			
-			error_reporting( E_ALL);
-			ini_set("display_errors", 1); 
-			
 			// TODO fix this
-			if( DEBUG === true) {
+			if( WPDB_DEBUG || DEBUG) {
 				error_reporting( E_ALL);
 				ini_set("display_errors", 1); 
 			}
@@ -295,25 +291,19 @@ class WPDBImportController extends PluginController {
 			redirect( get_url( 'plugin/wpdb_import/'));
 		}
 
-		/**
-		 * 
-		 * Enter description here ...
-		 */
 		public function WPDB_import() {
 			
 			$directory = 'wolf/plugins/wpdb_import/uploads/';	// directory for uploads
 			$filename = 'wordpress.xml';						// .xml name to force
 						
-			error_reporting( E_ALL);
-			ini_set("display_errors", 1); 
-			
-			// TODO fix this
-			if( DEBUG === true) {
+			if( WPDB_DEBUG || DEBUG) {
 				error_reporting( E_ALL);
 				ini_set("display_errors", 1); 
 			}
 			
-			$result = 'success';				// result status
+			if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_openLog();
+			
+			$result = 'success';			// result status
 			$message = 'Import successful';	// result message
 			
 			// get settings
@@ -333,22 +323,26 @@ class WPDBImportController extends PluginController {
 			// import categories
 
 			if( $settings['cat_import']) {
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n /****** Beginning category import process ******/");
 				if( $result != 'error' && !self::WPDB_importCategories( $xml, $settings)) {
 					$result = 'error';
 					$message = 'Failed to import WP categories.';
 				}
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n /****** Completed category import. ******/");
 			}
 			
 			// import pages & posts
 			
 			if( $settings['page_import'] || $settings['post_import']) {
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n /****** Beginning page & post import process ******/");
 				if( $result != 'error' && !self::WPDB_importContents( $xml, $settings)) {
 					$result = 'error';
 					$message = 'Failed to import WP pages and posts.';
 				}
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n /****** Completed page & post import. ******/");
 			}
 			
-			// attempt to remove the file
+			// clean up
 			
 			if( $result != 'error') {
 				if( !rename( 'wolf/plugins/wpdb_import/uploads/wordpress.xml', 'wolf/plugins/wpdb_import/uploads/wordpress.xml.old'))
@@ -360,16 +354,13 @@ class WPDBImportController extends PluginController {
 				else $message .= '!';
 			}
 			
+			if( !is_null( $this->logfp)) self::WPDB_closeLog();
+			
 			Flash::set( $result, __( $message));
 			
-			$result  == 'error' ?  redirect( get_url( 'plugin/wpdb_import/')) :
-				redirect( get_url( 'page'));	
+			$result  == 'error' ?  redirect( get_url( 'plugin/wpdb_import/')) : redirect( get_url( 'page'));
 		}
 		
-		/**
-		 * 
-		 * Enter description here ...
-		 */
 		public function WPDB_deleteFile( $redirect = true) {
 			
 			$result 		= 'success';					// result status
@@ -393,102 +384,6 @@ class WPDBImportController extends PluginController {
 	
 //  Private methods  ---------------------------------------------------------------------------------------------------
 
-		/**
-		 *	Cleans the XML file by removing useless namespace.
-		 * 	We don't need them and it clutters the source.
-		 * 
-		 *  @return SimpleXML
-		 */
-		private function WPDB_removeNameSpacesInXml(){
-			
-			// get file contents
-			// TODO error check file_get_contents
-			
-			$feed = file_get_contents( "wolf/plugins/wpdb_import/uploads/wordpress.xml");
-			
-			// remove namespaces
-			
-			$cleaned = str_replace( '<wp:'	, '<'	, $feed);
-			$cleaned = str_replace( '</wp:'	, '</'	, $cleaned);
-			$cleaned = str_replace( '<dc:'	, '<'	, $cleaned);
-			$cleaned = str_replace( '</dc:'	, '</'	, $cleaned);
-			
-			// return a SimpleXML object
-			
-			return( simplexml_load_string( $cleaned));
-		}
-		
-		/**
-		 * 
-		 * 
-		 */
-		private function WPDB_insertPage( $data) {
-						
-			$result = $data[0];		// return value
-		
-			// form PDOStatement with ? placeholders
-			
-			// TODO make this an array so we can dynamically add fields 
-			
-			$sql = 'INSERT INTO '.TABLE_PREFIX.'page (id, title, slug, breadcrumb, created_on, published_on, parent_id, layout_id, status_id, created_by_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-			
-			// access Wolf CMS DB to insert page
-			
-			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
-			
-			// return result
-			
-			return $result;
-		}
-
-		/**
-		 * 
-		 * 
-		 */
-		private function WPDB_insertPart( $pageId, $content){
-			
-			$result = $pageId;		// return value
-
-			// form PDOStatement with ? placeholders and data array
-			
-		  	$sql = 'INSERT INTO '.TABLE_PREFIX.'page_part (name, content, content_html, page_id) VALUES (?, ?, ?, ?)';
-		  	
-			$part_array = array( 'body', $content, $content, $pageId);
-			
-			// access Wolf CMS DB to insert page part
-			
-			if( !self::WPDB_callDB( $sql, false, $part_array)) $result = false;
-			
-			// return result
-			
-			return $result;
-		}
-
-		/**
-		 * 
-	 	 * Creates a new comment
-	 	 */
-		private function WPDB_insertComment( $data){
-			
-			$result = $data[0];		// return value
-
-			// form PDOStatement with ? placeholders and data array
-			
-		  	$sql = "INSERT INTO ".TABLE_PREFIX."comment (page_id, author_name, author_email, author_link, body, ip, created_on, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		  		
-		  	// access Wolf CMS DB to insert comment
-		  	
-			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
-			
-			// return result
-			
-			return $result;
-		}
-		
-		/**
-		 * 
-		 * TODO Custom error messages?
-		 */
 		private function WPDB_importCategories( $xml, $settings){
 			
 			$result 		= true;	// output
@@ -517,20 +412,16 @@ class WPDBImportController extends PluginController {
 				
 				case 'Draft' :
 					$statusId = Page::STATUS_DRAFT;
-					break;
-					
+					break;			
 				case 'Preview ':
 					$statusId = Page::STATUS_PREVIEW;
 					break;
-					
 				case 'Published' :
 					$statusId = Page::STATUS_PUBLISHED;
 					break;
-					
 				case 'Hidden' :
 					$statusId = Page::STATUS_HIDDEN;
 					break;
-					
 				case 'Archived' :
 					$statusId = Page::STATUS_ARCHIVED;
 					break;
@@ -545,13 +436,11 @@ class WPDBImportController extends PluginController {
 					
 					if( !( $content = file_get_contents( 'defaultCatContent.php'))) return false;
 					break;
-					
 				case '1' :
 					// TODO make this work
 					
 					if( !( $content = file_get_contents( '???'))) return false;	
 					break;
-					
 				case '2' :
 					$content = '';
 					break;
@@ -564,7 +453,6 @@ class WPDBImportController extends PluginController {
 				case '0' :
 					$parentId = 1;
 					break;
-					
 				case '1' :
 					$parentId = self::WPDB_getCategoryByName( $settings['cat_place_sel']);
 					break;
@@ -578,7 +466,6 @@ class WPDBImportController extends PluginController {
 				case '0' :
 					$datePublished = date( WPDB_DB_TIME_FORMAT);
 					break;
-					
 				case '1' :
 					$datePublished = $settings['cat_date_entry'];
 					break;	
@@ -594,6 +481,8 @@ class WPDBImportController extends PluginController {
 				$id		= $category->term_id;			// get WP:term_id for Wolf:id
 				$slug 	= $category->category_nicename;	// get WP:nicename for Wolf:slug
 				$title 	= $category->cat_name;			// get WP:name for Wolf:title
+				
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n -- Found category termId:$id slug:$slug title:$title");
 				
 				// ignore 'Uncategorized' WP:Category
 				// TODO make this behavior customizable
@@ -650,6 +539,8 @@ class WPDBImportController extends PluginController {
 				
 				// insert category
 				
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( " -- Inserting category breadcrumb:$breadcrumb datePublished:$datePublished parentId:$parentId layoutId:$layoutId statusId:$statusId userId:$userId");
+				
 				$categoryId = self::WPDB_insertPage( $data);
 				
 				// TODO just because one fails doesn't mean they all should fail
@@ -673,27 +564,17 @@ class WPDBImportController extends PluginController {
 			
 			return $result;
 		}
-		         
-		/**
-		 * 
-		 *
-		 */
+		  
 		private function WPDB_importContents( $xml, $settings) {
 			
 			// TODO turn this into the import log file
-			if( !( $fp = fopen('wolf/plugins/wpdb_import/uploads/import.log', 'w'))) exit( 'Could not open log file for writings.');
-			
-			/*
-			print_r( $xml);
-			exit( ob_get_clean());
-			*/
-			
+						
 			$result = true;			// return value
 			
 			$recordOffset 	= 1;	// offset from Record::lastInsertId()
 			
-			$id 				= '';
-			$slug 				= '';
+			$id 				= '';	
+			$slug 				= '';	
 			$title 				= '';
 			$breadcrumb			= '';
 			$userId 			= '';
@@ -705,7 +586,6 @@ class WPDBImportController extends PluginController {
 			$category 			= '';
 			$postType 			= '';
 			$commentStatus		= '';
-			
 	
 			$dateParse			= '';	// parsed date
 			$currentYear 		= '';	// the current year being used
@@ -719,12 +599,11 @@ class WPDBImportController extends PluginController {
 
 			foreach ( $xml->channel->item as $item) {
 				
-				$id 			= $item->post_id;
+				$id 			= (string) $item->post_id;
 				$slug 			= (string) $item->post_name;
 				$title 			= (string) $item->title;
 				$userId			= (string) $item->creator;
-				// TODO make sure that we are checking category existence properly
-				$category		= (string) $item->category[0]->attributes()->domain == 'category' ? $item->category[0] : $item->category[1];
+				$category 		=  null; 
 				$postType 		= (string) $item->post_type;
 				$commentStatus 	= ( $item->comment_status != 'open') ? 0 : 1;
 			
@@ -736,6 +615,8 @@ class WPDBImportController extends PluginController {
 				
 				if( $postType == "page" && $settings['page_import']) {
 					
+					if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n -- Found page post_id:$id slug:$slug title:$title userId:$userId");
+					
 					/* GET PAGE DATA */
 				
 					// get upload user
@@ -743,16 +624,14 @@ class WPDBImportController extends PluginController {
 					$checkUser = self::WPDB_checkUserExists( $userId);
 					
 					switch( $settings['page_users']) {
-						
+
 						case '0' :
 							// TODO add custom user
 							
 							break;
-							
 						case '1' :
 							if( !$checkUser) $userId = $settings['page_users_sel1'];
 							break;
-							
 						case '2' :
 							$userId = $settings['page_users_sel2'];
 							break;		
@@ -765,19 +644,15 @@ class WPDBImportController extends PluginController {
 						case 'Draft' :
 							$statusId = Page::STATUS_DRAFT;
 							break;
-							
 						case 'Preview' :
 							$statusId = Page::STATUS_PREVIEW;
 							break;
-							
 						case 'Published' :
 							$statusId = Page::STATUS_PUBLISHED;
 							break;
-							
 						case 'Hidden' :
 							$statusId = Page::STATUS_HIDDEN;
 							break;
-							
 						case 'Archived' :
 							$statusId = Page::STATUS_ARCHIVED;
 							break;
@@ -791,11 +666,9 @@ class WPDBImportController extends PluginController {
 						case '0' :
 							$datePublished = date( WPDB_DB_TIME_FORMAT);
 							break;
-							
 						case '1' :
 							$datePublished = $item->post_date;
 							break;
-							
 						case '2' :
 							$datePublished = $settings['page_date_entry'];
 							break;	
@@ -808,7 +681,6 @@ class WPDBImportController extends PluginController {
 						case '0' :
 							$parentId = 1;
 							break;
-							
 						case '1' :
 							$parentId = self::WPDB_getCategoryByName( $settings['page_place_sel']);
 							break;
@@ -831,8 +703,14 @@ class WPDBImportController extends PluginController {
 				// end if-page
 				} elseif( $postType == "post" && $settings['post_import']) {
 					
+					// get category if it's there
+					
+					if( $item->category) $category = (string) $item->category[0]->attributes()->domain == 'category' ? $item->category[0] : $item->category[1];
+					
+					if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( "\n -- Found post post_id:$id slug:$slug title:$title userId:$userId category:$category");
+					
 					/* GET POST DATA */
-				
+						
 					// get upload user
 					
 					$checkUser = self::WPDB_checkUserExists( $userId);
@@ -843,11 +721,9 @@ class WPDBImportController extends PluginController {
 							// TODO make a new user
 							
 							break;
-							
 						case '1' :
 							if( !$checkUser) $userId = $settings['post_users_sel1'];
 							break;
-							
 						case '2' :
 							$userId = $settings['post_users_sel2'];
 							break;
@@ -860,19 +736,15 @@ class WPDBImportController extends PluginController {
 						case 'Draft' :
 							$statusId = Page::STATUS_DRAFT;
 							break;
-							
 						case 'Preview' :
 							$statusId = Page::STATUS_PREVIEW;
 							break;
-							
 						case 'Published' :
 							$statusId = Page::STATUS_PUBLISHED;
 							break;
-							
 						case 'Hidden' :
 							$statusId = Page::STATUS_HIDDEN;
 							break;
-							
 						case 'Archived' :
 							$statusId = Page::STATUS_ARCHIVED;
 							break;
@@ -886,11 +758,9 @@ class WPDBImportController extends PluginController {
 						case '0' :
 							$datePublished = date( WPDB_DB_TIME_FORMAT);
 							break;
-							
 						case '1' :
 							$datePublished = $item->post_date;
 							break;
-							
 						case '2' :
 							$datePublished = $settings['post_date_entry'];
 							break;	
@@ -903,7 +773,6 @@ class WPDBImportController extends PluginController {
 						case '0' :
 							$parentId = 1;
 							break;
-							
 						case '1' :
 							if( $category != null && $category != 'Uncategorized')
 								$parentId = self::WPDB_getCategoryByName( $category);
@@ -913,9 +782,7 @@ class WPDBImportController extends PluginController {
 								else $parentId = 1;
 							}
 							break;
-							
 						case '2' :
-							
 							$parentId = self::WPDB_getCategoryByName( $settings['post_place_sel']);
 							break;
 					}
@@ -1037,7 +904,7 @@ class WPDBImportController extends PluginController {
 								
 								$currentMonth = $month;
 								
-								fwrite( $fp, "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
+								self::WPDB_log( "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
 								
 								// need to change month and add a new month page
 								
@@ -1138,7 +1005,7 @@ class WPDBImportController extends PluginController {
 								
 								$currentMonth = $month;
 								
-								fwrite( $fp, "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
+								self::WPDB_log( "Have to add a new month for '$title' because currentMonth: $currentMonth does not equal month: $month\n");
 								
 								// need to change month and add a new month page
 								
@@ -1224,8 +1091,6 @@ class WPDBImportController extends PluginController {
 					// end switch					
 					}
 					
-					
-					
 					// check if slug exists and rename if needed
 					
 					$iteration = 0;
@@ -1279,14 +1144,14 @@ class WPDBImportController extends PluginController {
 					$statusId, 
 					$userId
 				);
-						
-				//if( !fwrite($fp, 'Post "' . $title . '" has $parendId of ' . $parentId . "\n")) exit( 'Could not write to log file.');
 			
 				/* INSERT PAGE/POST */
 	
 				// insert page
 				
 				// TODO just because one fails doesn't mean they all should fail
+				
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( " -- Inserting content pageId:$id title:$title slug:$slug breadcrumb:$breadcrumb datePublished:$datePublished parentId:$parentId layoutId:$layoutId statusId:$statusId userId:$userId");
 				
 				$pageId = self::WPDB_insertPage( $page_array);
 				
@@ -1296,6 +1161,8 @@ class WPDBImportController extends PluginController {
 				}
 
 				// insert page content
+				
+				if( WPDB_LOGGING || WPDB_DEBUG || DEBUG) self::WPDB_log( " -- Inserting content for pageId:$pageId");
 				
 				$partId = self::WPDB_insertPart( $pageId, $content);
 	
@@ -1307,8 +1174,6 @@ class WPDBImportController extends PluginController {
 				// TODO insert comments
 			// end foreach
 			}
-			
-			fclose( $fp);
 			
 			return $result;
 		}
@@ -1378,18 +1243,82 @@ class WPDBImportController extends PluginController {
 			}
 		}
 		
-		/**
-		 * 
-		 * 
-		 */
-		private function WPDB_renameSlug( $slug) {
+		/****** utils ******/
+		
+		private function WPDB_removeNameSpacesInXml(){
 			
+			// get file contents
+			// TODO error check file_get_contents
+			
+			$feed = file_get_contents( "wolf/plugins/wpdb_import/uploads/wordpress.xml");
+			
+			// remove namespaces
+			
+			$cleaned = str_replace( '<wp:'	, '<'	, $feed);
+			$cleaned = str_replace( '</wp:'	, '</'	, $cleaned);
+			$cleaned = str_replace( '<dc:'	, '<'	, $cleaned);
+			$cleaned = str_replace( '</dc:'	, '</'	, $cleaned);
+			
+			// return a SimpleXML object
+			
+			return( simplexml_load_string( $cleaned));
 		}
 		
-		/**
-		 * 
-		 * 
-		 */
+		private function WPDB_insertPage( $data) {
+						
+			$result = $data[0];		// return value
+		
+			// form PDOStatement with ? placeholders
+			
+			// TODO make this an array so we can dynamically add fields 
+			
+			$sql = 'INSERT INTO '.TABLE_PREFIX.'page (id, title, slug, breadcrumb, created_on, published_on, parent_id, layout_id, status_id, created_by_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+			
+			// access Wolf CMS DB to insert page
+			
+			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
+			
+			// return result
+			
+			return $result;
+		}
+
+		private function WPDB_insertPart( $pageId, $content){
+			
+			$result = $pageId;		// return value
+
+			// form PDOStatement with ? placeholders and data array
+			
+		  	$sql = 'INSERT INTO '.TABLE_PREFIX.'page_part (name, content, content_html, page_id) VALUES (?, ?, ?, ?)';
+		  	
+			$part_array = array( 'body', $content, $content, $pageId);
+			
+			// access Wolf CMS DB to insert page part
+			
+			if( !self::WPDB_callDB( $sql, false, $part_array)) $result = false;
+			
+			// return result
+			
+			return $result;
+		}
+
+		private function WPDB_insertComment( $data){
+			
+			$result = $data[0];		// return value
+
+			// form PDOStatement with ? placeholders and data array
+			
+		  	$sql = "INSERT INTO ".TABLE_PREFIX."comment (page_id, author_name, author_email, author_link, body, ip, created_on, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		  		
+		  	// access Wolf CMS DB to insert comment
+		  	
+			if( !self::WPDB_callDB( $sql, false, $data)) $result = false;
+			
+			// return result
+			
+			return $result;
+		}
+		
 		private function WPDB_checkUserExists( $username){
 			
 			$userId = false;	// return id
@@ -1408,9 +1337,6 @@ class WPDBImportController extends PluginController {
 			return $userId;
 		}
 		
-		/**
-		 * 
-		 */
 		private function WPDB_makeUser() {
 			
 			$name 		= '';
@@ -1431,10 +1357,6 @@ class WPDBImportController extends PluginController {
         	}
 		}
 
-		/**
-		 * Checks if $slug is a valid page in WolfCMS
-		 * 
-		 */
 		private function WPDB_checkSlugExists( $slug) {
 		
 			// TODO replace with Page::findBySlug and return the page id
@@ -1447,17 +1369,11 @@ class WPDBImportController extends PluginController {
 			return Page::find( $filter);
 		}
 		
-		/**
-		 * 
-		 */
 		private function WPDB_checkPageIdExists( $id) {
 			
 			return Page::findById( $id);
 		}
 		
-		/** 
-		 * 
-		 */
 		private function WPDB_getCategoryByName( $category){
 			
 			$result = false;
@@ -1474,6 +1390,8 @@ class WPDBImportController extends PluginController {
 			
 			return $result;
 		}
+		
+		/****** database ******/
 		
 		public function WPDB_callDB( $sql, $fetch = false, $data = null) {
 					
@@ -1514,6 +1432,22 @@ class WPDBImportController extends PluginController {
 			}
 			
 			return $fetch ? $stm->fetchAll() : true;
+		}
+		
+		/****** logging ******/
+		
+		private function WPDB_openLog() {
+			if( !( $this->logfp = fopen('wolf/plugins/wpdb_import/uploads/import'.date("Y-m-d_h:i:s").'.log', 'w'))) exit( 'Could not open log file for writings.');
+			self::WPDB_log( "WPDB Import log-file\n".date("Y-m-d h:i:s")."\n\n");			
+		}
+		
+		private function WPDB_closeLog() {
+			self::WPDB_log( "\nEOF");
+			fclose( $this->logfp);
+		}
+		
+		private function WPDB_log( $content) {
+			if( !( fwrite( $this->logfp, "$content\n"))) exit( 'Could not write to log file.');
 		}
 }
 
