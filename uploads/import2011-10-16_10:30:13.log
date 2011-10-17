@@ -1,0 +1,31 @@
+WPDB Import log-file
+2011-10-16 10:30:13
+
+
+ - Sucessfully removed WP XML namespaces.
+
+ - Beginning category import process...
+
+
+ -- Found category termId:3 slug:test1 title:Test1
+ -- Inserting category breadcrumb:Test1 datePublished:2011-10-16 22:30:13 parentId:1 layoutId:0 statusId:101 userId:Administrator
+
+ -- Found category termId:4 slug:test2 title:Test2
+ -- Inserting category breadcrumb:Test2 datePublished:2011-10-16 22:30:13 parentId:1 layoutId:0 statusId:101 userId:Administrator
+
+ -- Found category termId:1 slug:uncategorized title:Uncategorized
+
+ - Completed category import.
+
+
+ - Beginning page & post import process...
+
+Post "Hello world!" has $parendId of 3
+
+Post "Sample Page" has $parendId of 1
+
+
+ - Completed page & post import.
+
+
+EOF

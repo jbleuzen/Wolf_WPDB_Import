@@ -1,0 +1,38 @@
+WPDB Import log-file
+2011-10-16 11:01:48
+
+
+
+ /****** Beginning category import process ******/
+
+ -- Found category termId:3 slug:test1 title:Test1
+ -- Inserting category breadcrumb:Test1 datePublished:2011-10-16 23:01:48 parentId:1 layoutId:0 statusId:101 userId:Administrator
+
+ -- Found category termId:4 slug:test2 title:Test2
+ -- Inserting category breadcrumb:Test2 datePublished:2011-10-16 23:01:48 parentId:1 layoutId:0 statusId:101 userId:Administrator
+
+ -- Found category termId:1 slug:uncategorized title:Uncategorized
+
+ /****** Completed category import. ******/
+
+ /****** Beginning page & post import process ******/
+
+ -- Found post post_id:1 slug:hello-world title:Hello world! userId:admin category:Test1
+ -- Inserting content pageId:60 title:Hello world! slug:hello-world breadcrumb:Hello world! datePublished:2011-05-25 01:08:32 parentId:3 layoutId:0 statusId:100 userId:Administrator
+ -- Inserting content for pageId:60
+
+ -- Found page post_id:2 slug:sample-page title:Sample Page userId:admin
+ -- Inserting content pageId:62 title:Sample Page slug:sample-page breadcrumb:Sample Page datePublished:2011-05-25 01:08:32 parentId:1 layoutId:0 statusId:101 userId:Administrator
+ -- Inserting content for pageId:62
+
+ -- Found post post_id:5 slug:test1 title:Test1 userId:admin category:Uncategorized
+ -- Inserting content pageId:64 title:Test1 slug:test10 breadcrumb:Test1 datePublished:2011-10-17 02:12:12 parentId:1 layoutId:0 statusId:100 userId:Administrator
+ -- Inserting content for pageId:64
+
+ -- Found post post_id:7 slug:test2 title:Test2 userId:admin category:Test2
+ -- Inserting content pageId:66 title:Test2 slug:test20 breadcrumb:Test2 datePublished:2011-10-17 02:13:11 parentId:59 layoutId:0 statusId:100 userId:Administrator
+ -- Inserting content for pageId:66
+
+ /****** Completed page & post import. ******/
+
+EOF
