@@ -1,1 +1,4 @@
 wpdb_import.esproj
+uploads/*.log
+uploads/*.xml
+uploads/*.xml.old
