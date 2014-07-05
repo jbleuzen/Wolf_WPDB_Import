@@ -15,12 +15,10 @@
 /* Security measure */
 if (!defined('IN_CMS')) { exit(); }
 
-?>
+/*
+ * Any code below gets executed each time the plugin is disabled.
+ */
 
-<h1><?php echo __('Documentation'); ?></h1>
-<p>
-<?php echo __('Coming soon.'); ?>
-</p>
-<p>
-<?php echo __('In the meantime, feel free to direct any questions to the <a href="https://github.com/spacez320">authors</a>.')?>
-</p>
+exit();
+
+?>

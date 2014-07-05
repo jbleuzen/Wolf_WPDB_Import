@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 /*
  * Wordpress Database Import - Wordpress to WolfCMS importing plugin
@@ -11,16 +11,5 @@
  * Project home:
  *   https://github.com/spacez320/wpdb_import
  */
-
-/* Security measure */
-if (!defined('IN_CMS')) { exit(); }
-
+	
 ?>
-
-<h1><?php echo __('Documentation'); ?></h1>
-<p>
-<?php echo __('Coming soon.'); ?>
-</p>
-<p>
-<?php echo __('In the meantime, feel free to direct any questions to the <a href="https://github.com/spacez320">authors</a>.')?>
-</p>
